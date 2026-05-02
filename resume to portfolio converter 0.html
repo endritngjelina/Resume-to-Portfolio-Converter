@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3a;
+            --bg-card: #252545;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: rgba(148, 163, 184, 0.1);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(118, 75, 162, 0.5)); }
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .feature-badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-badge:hover {
+            transform: translateY(-2px);
+            background: rgba(99, 102, 241, 0.2);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        .input-panel, .preview-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-controls {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        /* Input Controls */
+        .input-controls {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .theme-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-option.active {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .theme-minimal { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-modern { background: linear-gradient(135deg, #ff6b6b, #feca57); }
+        .theme-creative { background: linear-gradient(135deg, #48cae4, #023047); }
+        .theme-professional { background: linear-gradient(135deg, #2d3436, #636e72); }
+        .theme-vibrant { background: linear-gradient(135deg, #a8e6cf, #88d8a3); }
+        .theme-dark { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        /* Input Area */
+        .input-area {
+            flex: 1;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resume-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .resume-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Preview Area */
+        .preview-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .portfolio-preview {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transform-origin: top left;
+            width: 125%;
+            min-height: 800px;
+            color: #333;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .portfolio-preview:hover {
+            transform: scale(0.82);
+        }
+
+        /* Portfolio Themes */
+        .portfolio-minimal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .portfolio-modern {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+        }
+
+        .portfolio-creative {
+            background: linear-gradient(135deg, #48cae4 0%, #023047 100%);
+        }
+
+        .portfolio-professional {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        }
+
+        .portfolio-vibrant {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%);
+        }
+
+        .portfolio-dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .portfolio-header {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .portfolio-header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .portfolio-body {
+            background: white;
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .experience-item, .education-item, .project-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #6366f1;
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:hover, .education-item:hover, .project-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .item-company, .item-school {
+            color: #6366f1;
+            font-weight: 500;
+        }
+
+        .item-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .item-description {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .skill-category {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .skill-category h4 {
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .skill-tag {
+            background: #6366f1;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: rgba(99, 102, 241, 0.2);
+            width: 100%;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .portfolio-preview {
+                transform: scale(1);
+                width: 100%;
+            }
+            
+            .portfolio-preview:hover {
+                transform: scale(1.02);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .features-bar {
+                gap: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .control-row {
+                flex-direction: column;
+            }
+            
+            .panel-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Advanced animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Export modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        /* Full Screen Preview */
+        .fullscreen-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 2000;
+            overflow: auto;
+        }
+
+        .fullscreen-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2001;
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 10px);
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 900;
+            transition: all 0.3s ease;
+        }
+
+        .ai-assistant:hover {
+            transform: scale(1.1);
+        }
+
+        .ai-panel {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            width: 350px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            z-index: 900;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .ai-panel.open {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ai-suggestions {
+            margin-top: 1rem;
+        }
+
+        .ai-suggestion {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-suggestion:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        /* Theme-specific adjustments */
+        .portfolio-dark .portfolio-body {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .portfolio-dark .section-title {
+            color: white;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .portfolio-dark .experience-item,
+        .portfolio-dark .education-item,
+        .portfolio-dark .project-item,
+        .portfolio-dark .skill-category {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .portfolio-dark .item-title,
+        .portfolio-dark .item-description,
+        .portfolio-dark .skill-category h4 {
+            color: white;
+        }
+
+        .portfolio-dark .item-date {
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">PortfolioPro</h1>
+                <p class="tagline">Transform your resume into a stunning portfolio website instantly with AI-powered design</p>
+                <div class="features-bar">
+                    <div class="feature-badge">
+                        <span>🎨</span>
+                        Multiple Themes
+                    </div>
+                    <div class="feature-badge">
+                        <span>⚡</span>
+                        Real-time Preview
+                    </div>
+                    <div class="feature-badge">
+                        <span>📱</span>
+                        Responsive Design
+                    </div>
+                    <div class="feature-badge">
+                        <span>🚀</span>
+                        One-Click Export
+                    </div>
+                    <div class="feature-badge">
+                        <span>🤖</span>
+                        AI Assistant
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="input-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>📝</span>
+                        Resume Input
+                    </h2>
+                    <div class="panel-controls">
+                        <button class="btn btn-secondary tooltip" onclick="loadSampleData()" data-tooltip="Load sample resume data">
+                            <span>📋</span>
+                            Load Sample
+                        </button>
+                        <button class="btn btn-secondary tooltip" onclick="clearInput()" data-tooltip="Clear all input fields">
+                            <span>🗑️</span>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-controls">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label class="control-label">Choose Theme</label>
+                            <div class="theme-selector">
+                                <div class="theme-option theme-minimal active" data-theme="minimal" title="Minimal"></div>
+                                <div class="theme-option theme-modern" data-theme="modern" title="Modern"></div>
+                                <div class="theme-option theme-creative" data-theme="creative" title="Creative"></div>
+                                <div class="theme-option theme-professional" data-theme="professional" title="Professional"></div>
+                                <div class="theme-option theme-vibrant" data-theme="vibrant" title="Vibrant"></div>
+                                <div class="theme-option theme-dark" data-theme="dark" title="Dark"></div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <button class="btn tooltip" onclick="generatePortfolio()" id="generateBtn" data-tooltip="Generate your portfolio">
+                                <span>✨</span>
+                                Generate Portfolio
+                            </button>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea 
+                        class="resume-input" 
+                        id="resumeInput" 
+                        placeholder="Paste your resume content here...
+
+Example format:
+John Smith
+Software Engineer
+john.smith@email.com | (555) 123-4567 | linkedin.com/in/johnsmith
+
+EXPERIENCE
+Software Engineer - Tech Company (2022-Present)
+- Developed web applications using React and Node.js
+- Led a team of 5 developers on major projects
+
+EDUCATION  
+BS Computer Science - University Name (2018-2022)
+
+SKILLS
+JavaScript, Python, React, Node.js, AWS, Docker
+
+PROJECTS
+E-commerce Platform - Built full-stack application
+Portfolio Website - Designed responsive site"
+                        oninput="updateStats()"
+                    ></textarea>
+                    <div class="input-stats">
+                        <span id="charCount">0 characters</span>
+                        <span id="wordCount">0 words</span>
+                        <span id="lineCount">0 lines</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>🌟</span>
+                        Portfolio Preview
+                    </h2>
+                    <div class="panel-controls">
+                        <button class="btn btn-secondary tooltip" onclick="togglePreview()" data-tooltip="Toggle full screen preview">
+                            <span>👁️</span>
+                            Full Screen
+                        </button>
+                        <button class="btn tooltip" onclick="exportPortfolio()" data-tooltip="Export your portfolio">
+                            <span>💾</span>
+                            Export HTML
+                        </button>
+                    </div>
+                </div>
+
+                <div class="preview-content">
+                    <div id="portfolioPreview" class="portfolio-preview portfolio-minimal">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Paste your resume content and click "Generate Portfolio" to see your beautiful portfolio website
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant" onclick="toggleAIPanel()">
+        <i class="fas fa-robot" style="font-size: 24px; color: white;"></i>
+    </div>
+
+    <div class="ai-panel" id="aiPanel">
+        <h3>AI Assistant</h3>
+        <p>I can help you improve your resume content:</p>
+        <div class="ai-suggestions">
+            <div class="ai-suggestion" onclick="applyAISuggestion('actionVerbs')">Use more action verbs</div>
+            <div class="ai-suggestion" onclick="applyAISuggestion('quantify')">Add quantifiable achievements</div>
+            <div class="ai-suggestion" onclick="applyAISuggestion('keywords')">Include industry keywords</div>
+            <div class="ai-suggestion" onclick="applyAISuggestion('formatting')">Optimize formatting</div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Export Portfolio</h3>
+            <p>Your portfolio is ready to export! Choose your preferred option:</p>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Portfolio exported successfully!
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" onclick="downloadHTML()">
+                    <span>💾</span>
+                    Download HTML
+                </button>
+                <button class="btn" onclick="copyHTML()">
+                    <span>📋</span>
+                    Copy Code
+                </button>
+                <button class="btn" onclick="previewCode()">
+                    <span>👁️</span>
+                    Preview Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Preview Modal -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Portfolio HTML Code</h3>
+            <pre id="codePreview" style="background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; overflow: auto; max-height: 400px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;"></pre>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeCodeModal()">Close</button>
+                <button class="btn" onclick="copyCode()">
+                    <span>📋</span>
+                    Copy Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'minimal';
+        let generatedHTML = '';
+        let resumeData = {};
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            setupEventListeners();
+            setupRealTimePreview();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Theme selection
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    currentTheme = option.dataset.theme;
+                    
+                    const preview = document.getElementById('portfolioPreview');
+                    preview.className = `portfolio-preview portfolio-${currentTheme} fade-in`;
+                    
+                    if (document.getElementById('resumeInput').value.trim()) {
+                        generatePortfolio();
+                    }
+                });
+            });
+
+            // Input auto-resize
+            const textarea = document.getElementById('resumeInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    generatePortfolio();
+                }
+            });
+        }
+
+        // Set up real-time preview with debounce
+        function setupRealTimePreview() {
+            const input = document.getElementById('resumeInput');
+            let timeout = null;
+            
+            input.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    if (input.value.trim().length > 100) {
+                        generatePortfolio();
+                    }
+                }, 1500);
+            });
+        }
+
+        // Update input stats
+        function updateStats() {
+            const input = document.getElementById('resumeInput');
+            const text = input.value;
+            
+            document.getElementById('charCount').textContent = `${text.length} characters`;
+            document.getElementById('wordCount').textContent = `${text.split(/\s+/).filter(word => word.length > 0).length} words`;
+            document.getElementById('lineCount').textContent = `${text.split('\n').length} lines`;
+            
+            // Update progress bar
+            const progressFill = document.getElementById('progressFill');
+            const wordCount = text.split(/\s+/).filter(word => word.length > 0).length;
+            const progress = Math.min(100, (wordCount / 300) * 100);
+            progressFill.style.width = `${progress}%`;
+        }
+
+        // Parse resume content with enhanced AI-like parsing
+        function parseResumeContent(content) {
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+            const sections = {
+                name: '',
+                title: '',
+                summary: '',
+                contact: [],
+                experience: [],
+                education: [],
+                skills: [],
+                projects: [],
+                certifications: [],
+                languages: []
+            };
+
+            let currentSection = '';
+            let currentItem = {};
+
+            // Extract name and title from first few lines
+            if (lines.length > 0) sections.name = lines[0];
+            if (lines.length > 1 && !isContactLine(lines[1]) && !isSectionHeader(lines[1])) {
+                sections.title = lines[1];
+            }
+
+            // Try to extract summary if present
+            const summaryIndex = lines.findIndex(line => isSectionHeader(line, 'SUMMARY') || isSectionHeader(line, 'PROFILE'));
+            if (summaryIndex !== -1 && summaryIndex + 1 < lines.length) {
+                sections.summary = lines[summaryIndex + 1];
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const upperLine = line.toUpperCase();
+
+                // Detect contact info
+                if (isContactLine(line) && i < 5) {
+                    const contacts = line.split('|').map(c => c.trim());
+                    sections.contact = contacts;
+                    continue;
+                }
+
+                // Detect sections
+                if (isSectionHeader(line, 'EXPERIENCE') || isSectionHeader(line, 'WORK')) {
+                    currentSection = 'experience';
+                    continue;
+                } else if (isSectionHeader(line, 'EDUCATION')) {
+                    currentSection = 'education';
+                    continue;
+                } else if (isSectionHeader(line, 'SKILLS')) {
+                    currentSection = 'skills';
+                    continue;
+                } else if (isSectionHeader(line, 'PROJECTS')) {
+                    currentSection = 'projects';
+                    continue;
+                } else if (isSectionHeader(line, 'CERTIFICATIONS') || isSectionHeader(line, 'CERTIFICATES')) {
+                    currentSection = 'certifications';
+                    continue;
+                } else if (isSectionHeader(line, 'LANGUAGES')) {
+                    currentSection = 'languages';
+                    continue;
+                }
+
+                // Parse section content
+                if (['experience', 'education', 'projects', 'certifications'].includes(currentSection)) {
+                    if (line.includes('-') && !line.startsWith('-') && !line.startsWith('•')) {
+                        // New item
+                        if (Object.keys(currentItem).length > 0) {
+                            sections[currentSection].push(currentItem);
+                        }
+                        
+                        const parts = line.split('-');
+                        const titlePart = parts[0].trim();
+                        const datePart = parts[parts.length - 1].trim();
+                        const companyPart = parts.length > 2 ? parts[1].trim() : '';
+
+                        currentItem = {
+                            title: extractTitle(titlePart),
+                            company: extractCompany(companyPart, titlePart),
+                            date: extractDate(datePart),
+                            description: []
+                        };
+                    } else if ((line.startsWith('-') || line.startsWith('•')) && Object.keys(currentItem).length > 0) {
+                        // Description bullet point
+                        currentItem.description.push(line.substring(1).trim());
+                    }
+                } else if (currentSection === 'skills') {
+                    if (line && !isSectionHeader(line)) {
+                        const skillList = line.split(/[,;]/).map(s => s.trim()).filter(s => s);
+                        sections.skills = sections.skills.concat(skillList);
+                    }
+                } else if (currentSection === 'languages') {
+                    if (line && !isSectionHeader(line)) {
+                        const languageList = line.split(/[,;]/).map(s => s.trim()).filter(s => s);
+                        sections.languages = sections.languages.concat(languageList);
+                    }
+                }
+            }
+
+            // Add last item
+            if (Object.keys(currentItem).length > 0) {
+                sections[currentSection].push(currentItem);
+            }
+
+            // Store the parsed data for later use
+            resumeData = sections;
+            
+            return sections;
+        }
+
+        // Helper functions for parsing
+        function isContactLine(line) {
+            return line.includes('@') || line.includes('linkedin') || line.includes('github') || 
+                   line.includes('portfolio') || /\(\d{3}\)/.test(line) || line.includes('http');
+        }
+
+        function isSectionHeader(line, sectionName) {
+            if (!sectionName) {
+                return /^(EXPERIENCE|EDUCATION|SKILLS|PROJECTS|CERTIFICATIONS|LANGUAGES|SUMMARY|PROFILE)$/i.test(line);
+            }
+            return new RegExp(`^${sectionName}$`, 'i').test(line);
+        }
+
+        function extractTitle(titlePart) {
+            return titlePart.split(' at ')[0] || titlePart.split(' - ')[0] || titlePart;
+        }
+
+        function extractCompany(companyPart, titlePart) {
+            if (companyPart) return companyPart;
+            if (titlePart.includes(' at ')) return titlePart.split(' at ')[1];
+            if (titlePart.includes(' - ')) return titlePart.split(' - ')[1];
+            return '';
+        }
+
+        function extractDate(datePart) {
+            if (datePart.match(/\(.*\)/)) {
+                return datePart.match(/\(.*\)/)[0].replace(/[()]/g, '');
+            }
+            if (datePart.match(/\d{4}.*\d{4}/) || datePart.match(/\d{4}.*(Present|Current)/)) {
+                return datePart;
+            }
+            return '';
+        }
+
+        // Generate portfolio
+        function generatePortfolio() {
+            const input = document.getElementById('resumeInput').value.trim();
+            if (!input) {
+                showToast('Please paste your resume content first!', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; margin-right: 0.5rem;"></div>Generating...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                try {
+                    const sections = parseResumeContent(input);
+                    renderPortfolio(sections);
+                    showToast('Portfolio generated successfully!', 'success');
+                } catch (error) {
+                    console.error('Error generating portfolio:', error);
+                    showToast('Error generating portfolio. Please check your input format.', 'error');
+                }
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // Render portfolio
+        function renderPortfolio(sections) {
+            const preview = document.getElementById('portfolioPreview');
+            
+            const html = `
+                <div class="portfolio-header">
+                    <h1 class="portfolio-name">${sections.name || 'Your Name'}</h1>
+                    <h2 class="portfolio-title">${sections.title || 'Professional Title'}</h2>
+                    ${sections.summary ? `<p class="portfolio-summary">${sections.summary}</p>` : ''}
+                    <div class="portfolio-contact">
+                        ${sections.contact.map(contact => `<div class="contact-item">${contact}</div>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="portfolio-body">
+                    ${sections.summary && !sections.summary.includes('${sections.summary}') ? `
+                    <div class="section">
+                        <h3 class="section-title">About Me</h3>
+                        <p>${sections.summary}</p>
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.experience.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Experience</h3>
+                        ${sections.experience.map(exp => `
+                            <div class="experience-item">
+                                <div class="item-header">
+                                    <div>
+                                        <h4 class="item-title">${exp.title}</h4>
+                                        ${exp.company ? `<div class="item-company">${exp.company}</div>` : ''}
+                                    </div>
+                                    ${exp.date ? `<div class="item-date">${exp.date}</div>` : ''}
+                                </div>
+                                ${exp.description.length > 0 ? `
+                                    <ul class="item-description">
+                                        ${exp.description.map(desc => `<li>${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.education.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Education</h3>
+                        ${sections.education.map(edu => `
+                            <div class="education-item">
+                                <div class="item-header">
+                                    <div>
+                                        <h4 class="item-title">${edu.title}</h4>
+                                        ${edu.company ? `<div class="item-school">${edu.company}</div>` : ''}
+                                    </div>
+                                    ${edu.date ? `<div class="item-date">${edu.date}</div>` : ''}
+                                </div>
+                                ${edu.description.length > 0 ? `
+                                    <ul class="item-description">
+                                        ${edu.description.map(desc => `<li>${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.skills.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Skills</h3>
+                        <div class="skills-grid">
+                            ${chunkArray(sections.skills, 5).map(skillGroup => `
+                                <div class="skill-category">
+                                    <div class="skill-tags">
+                                        ${skillGroup.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.projects.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Projects</h3>
+                        ${sections.projects.map(project => `
+                            <div class="project-item">
+                                <div class="item-header">
+                                    <div>
+                                        <h4 class="item-title">${project.title}</h4>
+                                        ${project.company ? `<div class="item-company">${project.company}</div>` : ''}
+                                    </div>
+                                    ${project.date ? `<div class="item-date">${project.date}</div>` : ''}
+                                </div>
+                                ${project.description.length > 0 ? `
+                                    <ul class="item-description">
+                                        ${project.description.map(desc => `<li>${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.certifications.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Certifications</h3>
+                        ${sections.certifications.map(cert => `
+                            <div class="education-item">
+                                <div class="item-header">
+                                    <div>
+                                        <h4 class="item-title">${cert.title}</h4>
+                                        ${cert.company ? `<div class="item-school">${cert.company}</div>` : ''}
+                                    </div>
+                                    ${cert.date ? `<div class="item-date">${cert.date}</div>` : ''}
+                                </div>
+                                ${cert.description.length > 0 ? `
+                                    <ul class="item-description">
+                                        ${cert.description.map(desc => `<li>${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${sections.languages.length > 0 ? `
+                    <div class="section">
+                        <h3 class="section-title">Languages</h3>
+                        <div class="skills-grid">
+                            <div class="skill-category">
+                                <div class="skill-tags">
+                                    ${sections.languages.map(lang => `<span class="skill-tag">${lang}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            preview.innerHTML = html;
+            generatedHTML = html;
+        }
+
+        // Helper function to chunk array
+        function chunkArray(array, size) {
+            const result = [];
+            for (let i = 0; i < array.length; i += size) {
+                result.push(array.slice(i, i + size));
+            }
+            return result;
+        }
+
+        // Load sample data
+        function loadSampleData() {
+            const sampleData = `John Smith
+Senior Software Engineer
+john.smith@email.com | (555) 123-4567 | linkedin.com/in/johnsmith | github.com/johnsmith
+
+Experienced software engineer with 5+ years of expertise in building scalable web applications. Passionate about clean code and user-centered design.
+
+EXPERIENCE
+Senior Software Engineer - Tech Innovations Inc. (2022-Present)
+- Led development of a React-based SaaS product serving 10,000+ users
+- Implemented CI/CD pipeline reducing deployment time by 40%
+- Mentored 3 junior developers and conducted code reviews
+
+Software Developer - Digital Solutions LLC (2020-2022)
+- Developed RESTful APIs using Node.js and Express
+- Built responsive front-end interfaces with React and Redux
+- Collaborated with UX designers to implement user-friendly features
+
+EDUCATION
+BS Computer Science - University of Technology (2016-2020)
+- Graduated with honors (GPA: 3.8/4.0)
+- Relevant coursework: Algorithms, Data Structures, Web Development
+
+SKILLS
+JavaScript, TypeScript, React, Node.js, Python, AWS, Docker, Kubernetes, CI/CD, Agile
+
+PROJECTS
+E-commerce Platform - Full-stack application with React and Node.js
+- Implemented payment processing with Stripe API
+- Reduced page load time by optimizing images and code splitting
+
+Task Management App - React Native mobile application
+- Allowed users to organize tasks with drag-and-drop functionality
+- Synced data across devices using Firebase
+
+CERTIFICATIONS
+AWS Certified Developer Associate - Amazon Web Services (2021)
+Google Cloud Professional Developer - Google Cloud (2022)
+
+LANGUAGES
+English (Native), Spanish (Intermediate), French (Basic)`;
+
+            document.getElementById('resumeInput').value = sampleData;
+            updateStats();
+            generatePortfolio();
+            showToast('Sample resume loaded!', 'success');
+        }
+
+        // Clear input
+        function clearInput() {
+            document.getElementById('resumeInput').value = '';
+            document.getElementById('portfolioPreview').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Paste your resume content and click "Generate Portfolio" to see your beautiful portfolio website
+                </div>
+            `;
+            updateStats();
+            showToast('Input cleared', 'success');
+        }
+
+        // Toggle preview mode
+        function togglePreview() {
+            const preview = document.getElementById('portfolioPreview');
+            if (preview.classList.contains('fullscreen-preview')) {
+                preview.classList.remove('fullscreen-preview');
+                document.body.style.overflow = 'auto';
+            } else {
+                preview.classList.add('fullscreen-preview');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Export portfolio
+        function exportPortfolio() {
+            if (!generatedHTML) {
+                showToast('Please generate a portfolio first!', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('exportModal');
+            modal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('exportModal');
+            modal.classList.remove('active');
+        }
+
+        // Download HTML
+        function downloadHTML() {
+            const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${resumeData.name || 'My Portfolio'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .portfolio-header {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .portfolio-header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .portfolio-body {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .experience-item, .education-item, .project-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .item-company, .item-school {
+            color: #6366f1;
+            font-weight: 500;
+        }
+        
+        .item-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .item-description {
+            color: #4b5563;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .skill-category {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .skill-tag {
+            background: #6366f1;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .portfolio-header {
+                padding: 2rem 1rem;
+            }
+            
+            .portfolio-name {
+                font-size: 2rem;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .item-header {
+                flex-direction: column;
+            }
+            
+            .item-date {
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    ${generatedHTML}
+</body>
+</html>`;
+
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${(resumeData.name || 'portfolio').toLowerCase().replace(/\s+/g, '-')}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            document.getElementById('successMessage').classList.add('show');
+            setTimeout(() => {
+                closeModal();
+            }, 2000);
+        }
+
+        // Copy HTML to clipboard
+        function copyHTML() {
+            const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${resumeData.name || 'My Portfolio'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .portfolio-header {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .portfolio-header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .portfolio-body {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .experience-item, .education-item, .project-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .item-company, .item-school {
+            color: #6366f1;
+            font-weight: 500;
+        }
+        
+        .item-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .item-description {
+            color: #4b5563;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .skill-category {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .skill-tag {
+            background: #6366f1;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .portfolio-header {
+                padding: 2rem 1rem;
+            }
+            
+            .portfolio-name {
+                font-size: 2rem;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .item-header {
+                flex-direction: column;
+            }
+            
+            .item-date {
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    ${generatedHTML}
+</body>
+</html>`;
+
+            navigator.clipboard.writeText(fullHTML).then(() => {
+                document.getElementById('successMessage').classList.add('show');
+                setTimeout(() => {
+                    closeModal();
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
+        // Preview code
+        function previewCode() {
+            const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${resumeData.name || 'My Portfolio'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .portfolio-header {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .portfolio-header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .portfolio-body {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .experience-item, .education-item, .project-item {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .item-company, .item-school {
+            color: #6366f1;
+            font-weight: 500;
+        }
+        
+        .item-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .item-description {
+            color: #4b5563;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .skill-category {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .skill-tag {
+            background: #6366f1;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .portfolio-header {
+                padding: 2rem 1rem;
+            }
+            
+            .portfolio-name {
+                font-size: 2rem;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .item-header {
+                flex-direction: column;
+            }
+            
+            .item-date {
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    ${generatedHTML}
+</body>
+</html>`;
+
+            document.getElementById('codePreview').textContent = fullHTML;
+            document.getElementById('codeModal').classList.add('active');
+        }
+
+        // Close code modal
+        function closeCodeModal() {
+            document.getElementById('codeModal').classList.remove('active');
+        }
+
+        // Copy code from code modal
+        function copyCode() {
+            const code = document.getElementById('codePreview').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('Code copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy code', 'error');
+            });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Toggle AI panel
+        function toggleAIPanel() {
+            const panel = document.getElementById('aiPanel');
+            panel.classList.toggle('open');
+        }
+
+        // Apply AI suggestions
+        function applyAISuggestion(type) {
+            const textarea = document.getElementById('resumeInput');
+            let content = textarea.value;
+            
+            switch(type) {
+                case 'actionVerbs':
+                    content = content.replace(/\b(Developed|Built|Created)\b/g, 'Engineered');
+                    content = content.replace(/\b(Made|Did)\b/g, 'Implemented');
+                    content = content.replace(/\b(Worked on)\b/g, 'Spearheaded');
+                    showToast('Action verbs enhanced!', 'success');
+                    break;
+                case 'quantify':
+                    content = content.replace(/\b(Improved performance)\b/g, 'Improved performance by 40%');
+                    content = content.replace(/\b(Managed a team)\b/g, 'Managed a team of 5 developers');
+                    content = content.replace(/\b(Increased user engagement)\b/g, 'Increased user engagement by 25%');
+                    showToast('Quantifiable achievements added!', 'success');
+                    break;
+                case 'keywords':
+                    content += '\n\nKeywords: Agile Methodology, CI/CD, RESTful APIs, Responsive Design, Cloud Computing';
+                    showToast('Industry keywords added!', 'success');
+                    break;
+                case 'formatting':
+                    content = content.replace(/(EXPERIENCE|EDUCATION|SKILLS|PROJECTS)/g, '\n$1\n');
+                    content = content.replace(/\n{3,}/g, '\n\n');
+                    showToast('Formatting optimized!', 'success');
+                    break;
+            }
+            
+            textarea.value = content;
+            updateStats();
+            generatePortfolio();
+            toggleAIPanel();
+        }
+    </script>
+</body>
+</html>
