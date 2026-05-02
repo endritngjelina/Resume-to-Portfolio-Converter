@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter Pro | Next-Gen Portfolio Builder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --primary-dark: #0d47a1;
+            --google-gray: #5f6368;
+            --google-light-gray: #f8f9fa;
+            --google-dark-gray: #3c4043;
+            --google-green: #0f9d58;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc04;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .dark-mode {
+            --primary-blue: #8ab4f8;
+            --primary-dark: #aecbfa;
+            --google-gray: #9aa0a6;
+            --google-light-gray: #202124;
+            --google-dark-gray: #e8eaed;
+            --google-green: #81c995;
+            --google-red: #f28b82;
+            --google-yellow: #fdd663;
+            --background: #202124;
+            --card-bg: #303134;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--google-light-gray);
+            color: var(--google-dark-gray);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.dark-mode {
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .container {
+            background: var(--card-bg);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            );
+            animation: shimmer 20s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 0;
+            min-height: 80vh;
+        }
+
+        .input-panel {
+            background: var(--google-light-gray);
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            max-height: 85vh;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .input-panel {
+            background: var(--card-bg);
+            border-right: 1px solid #5f6368;
+        }
+
+        .preview-panel {
+            padding: 30px;
+            background: white;
+            position: relative;
+            overflow-y: auto;
+            max-height: 85vh;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .preview-panel {
+            background: var(--card-bg);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--google-dark-gray);
+            margin-bottom: 8px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .form-group label {
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body.dark-mode .form-control {
+            background: #303134;
+            border-color: #5f6368;
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--google-green);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0b8043;
+            transform: translateY(-2px);
+        }
+
+        .btn-tertiary {
+            background: var(--google-gray);
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            background: #505256;
+            transform: translateY(-2px);
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .theme-option {
+            aspect-ratio: 1;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-option.active {
+            border-color: var(--primary-blue);
+            transform: scale(1.05);
+            box-shadow: var(--shadow);
+        }
+
+        .theme-modern { background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); }
+        .theme-professional { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+        .theme-creative { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
+        .theme-minimal { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color: #333; }
+        .theme-tech { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%); }
+        .theme-google { background: linear-gradient(135deg, #4285F4 0%, #34A853 33%, #FBBC05 66%, #EA4335 100%); }
+
+        .portfolio-preview {
+            border: 2px solid #dadce0;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow);
+            min-height: 600px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .portfolio-preview {
+            background: #303134;
+            border-color: #5f6368;
+        }
+
+        .portfolio-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .portfolio-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .portfolio-content {
+            padding: 30px;
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .portfolio-summary {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--google-gray);
+            text-align: justify;
+        }
+
+        body.dark-mode .portfolio-summary {
+            color: var(--text-secondary);
+        }
+
+        .experience-item, .education-item {
+            background: var(--google-light-gray);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-blue);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .experience-item, 
+        body.dark-mode .education-item {
+            background: #202124;
+        }
+
+        .experience-item:hover, .education-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .item-company, .item-school {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .item-date {
+            font-size: 0.9rem;
+            color: var(--google-gray);
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        body.dark-mode .item-description {
+            color: var(--text-secondary);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .skill-item {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .skill-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .export-options {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--google-light-gray);
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        body.dark-mode .export-options {
+            background: #202124;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--google-gray);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-suggestions {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-blue);
+            transition: var(--transition);
+        }
+
+        body.dark-mode .ai-suggestions {
+            background: linear-gradient(135deg, #1a237e 0%, #004d40 100%);
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestion-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .suggestion-item {
+            background: #303134;
+            color: var(--text-primary);
+        }
+
+        .suggestion-item:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--google-light-gray);
+            border: 2px solid #dadce0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark-mode .mode-toggle {
+            background: var(--card-bg);
+            border-color: #5f6368;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary-blue);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background: var(--google-dark-gray);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .import-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .import-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: white;
+            border: 2px solid #dadce0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .import-btn:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        body.dark-mode .import-btn {
+            background: #303134;
+            border-color: #5f6368;
+        }
+
+        .import-btn i {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .collaboration-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--google-green);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .code-view-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .code-view-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .code-view {
+            display: none;
+            background: #263238;
+            color: #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            overflow: auto;
+            max-height: 400px;
+        }
+
+        .code-view.active {
+            display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-panel {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            body.dark-mode .input-panel {
+                border-bottom: 1px solid #5f6368;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .portfolio-name {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            .import-options {
+                flex-direction: column;
+            }
+        }
+
+        /* Theme variations */
+        .theme-professional .portfolio-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .theme-creative .portfolio-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+        
+        .theme-minimal .portfolio-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+        }
+        
+        .theme-tech .portfolio-header {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+        }
+        
+        .theme-google .portfolio-header {
+            background: linear-gradient(135deg, #4285F4 0%, #34A853 33%, #FBBC05 66%, #EA4335 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="mode-toggle" id="modeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-magic"></i> Resume-to-Portfolio Converter Pro</h1>
+                <p>Transform your resume into a stunning portfolio website instantly with AI-powered enhancements</p>
+                <div class="badge">
+                    <i class="fas fa-star"></i> Now with Real-time Collaboration & Advanced Analytics
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="profileProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-file-upload"></i> Input Your Resume
+                    </div>
+                    <div class="tooltip">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="tooltiptext">Enter your resume details or import from LinkedIn/PDF</span>
+                    </div>
+                </div>
+
+                <div class="import-options">
+                    <div class="import-btn" onclick="importFromLinkedIn()">
+                        <i class="fab fa-linkedin"></i>
+                        <span>Import from LinkedIn</span>
+                    </div>
+                    <div class="import-btn" onclick="importFromPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Import from PDF</span>
+                    </div>
+                    <div class="import-btn" onclick="importFromJSON()">
+                        <i class="fas fa-file-code"></i>
+                        <span>Import JSON Resume</span>
+                    </div>
+                </div>
+
+                <div class="ai-suggestions">
+                    <div class="suggestion-title">
+                        <i class="fas fa-robot"></i> AI-Powered Enhancements
+                    </div>
+                    <div class="suggestion-item" onclick="loadSampleResume()">
+                        <i class="fas fa-user-tie"></i> Load Sample Software Engineer Resume
+                    </div>
+                    <div class="suggestion-item" onclick="optimizeContent()">
+                        <i class="fas fa-rocket"></i> Optimize Content for Google ATS
+                    </div>
+                    <div class="suggestion-item" onclick="generateSummary()">
+                        <i class="fas fa-brain"></i> Generate Professional Summary with AI
+                    </div>
+                    <div class="suggestion-item" onclick="analyzeSkills()">
+                        <i class="fas fa-chart-pie"></i> Analyze Skills Gap with Market Trends
+                    </div>
+                </div>
+
+                <form id="resumeForm">
+                    <div class="form-group">
+                        <label for="fullName">
+                            <i class="fas fa-user"></i> Full Name *
+                        </label>
+                        <input type="text" id="fullName" class="form-control" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobTitle">
+                            <i class="fas fa-briefcase"></i> Job Title *
+                        </label>
+                        <input type="text" id="jobTitle" class="form-control" placeholder="Senior Software Engineer" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" class="form-control" placeholder="john.doe@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i> Phone
+                        </label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </label>
+                        <input type="text" id="location" class="form-control" placeholder="San Francisco, CA">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="linkedin">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </label>
+                        <input type="url" id="linkedin" class="form-control" placeholder="https://linkedin.com/in/johndoe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="portfolio">
+                            <i class="fas fa-globe"></i> Portfolio Website
+                        </label>
+                        <input type="url" id="portfolio" class="form-control" placeholder="https://johndoe.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="summary">
+                            <i class="fas fa-user-circle"></i> Professional Summary
+                        </label>
+                        <textarea id="summary" class="form-control" placeholder="Passionate software engineer with 5+ years of experience..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">
+                            <i class="fas fa-building"></i> Work Experience (One per line in format: Title | Company | Date | Description)
+                        </label>
+                        <textarea id="experience" class="form-control" placeholder="Senior Software Engineer | Google | Jan 2020 - Present | Developed scalable web applications..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="education">
+                            <i class="fas fa-graduation-cap"></i> Education (One per line in format: Degree | School | Year | Details)
+                        </label>
+                        <textarea id="education" class="form-control" placeholder="B.S. Computer Science | Stanford University | 2018 | GPA: 3.8, Relevant coursework: Algorithms..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skills">
+                            <i class="fas fa-code"></i> Skills (comma-separated)
+                        </label>
+                        <textarea id="skills" class="form-control" placeholder="JavaScript, Python, React, Node.js, AWS, Docker..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projects">
+                            <i class="fas fa-project-diagram"></i> Projects (One per line in format: Name | Technologies | Description)
+                        </label>
+                        <textarea id="projects" class="form-control" placeholder="E-commerce Platform | React, Node.js, MongoDB | Developed a full-stack e-commerce solution..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-palette"></i> Choose Theme</label>
+                        <div class="theme-selector">
+                            <div class="theme-option theme-modern active" data-theme="modern">Modern</div>
+                            <div class="theme-option theme-professional" data-theme="professional">Pro</div>
+                            <div class="theme-option theme-creative" data-theme="creative">Creative</div>
+                            <div class="theme-option theme-minimal" data-theme="minimal">Minimal</div>
+                            <div class="theme-option theme-tech" data-theme="tech">Tech</div>
+                            <div class="theme-option theme-google" data-theme="google">Google</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customCSS">
+                            <i class="fas fa-code"></i> Custom CSS
+                        </label>
+                        <textarea id="customCSS" class="form-control" placeholder="Add your custom CSS here..." rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-eye"></i> Live Preview
+                    </div>
+                    <div class="collaboration-badge">
+                        <i class="fas fa-users"></i> Real-time Collaboration Enabled
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="generatePortfolio()">
+                        <i class="fas fa-sync-alt"></i> Regenerate
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportHTML()">
+                        <i class="fas fa-download"></i> Export HTML
+                    </button>
+                    <button class="btn btn-tertiary" onclick="toggleCodeView()">
+                        <i class="fas fa-code"></i> View Code
+                    </button>
+                </div>
+
+                <div id="portfolioPreview" class="portfolio-preview">
+                    <div class="loading active">
+                        <div class="spinner"></div>
+                        <p>Enter your information to see the preview...</p>
+                    </div>
+                </div>
+
+                <div class="code-view" id="codeView">
+                    <pre><code id="generatedCode"></code></pre>
+                </div>
+
+                <div class="export-options">
+                    <h4><i class="fas fa-download"></i> Advanced Export Options</h4>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="exportPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn btn-primary" onclick="exportMarkdown()">
+                            <i class="fas fa-file-alt"></i> Export Markdown
+                        </button>
+                        <button class="btn btn-secondary" onclick="sharePortfolio()">
+                            <i class="fas fa-share"></i> Share Link
+                        </button>
+                        <button class="btn btn-tertiary" onclick="publishToGitHub()">
+                            <i class="fab fa-github"></i> Publish to GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'modern';
+        let portfolioData = {};
+        let isDarkMode = false;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateProgressBar();
+            generatePortfolio();
+            checkCollaboration();
+        });
+
+        function setupEventListeners() {
+            // Form input listeners
+            const formElements = ['fullName', 'jobTitle', 'email', 'phone', 'location', 'linkedin', 'portfolio', 'summary', 'experience', 'education', 'skills', 'projects', 'customCSS'];
+            formElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', debounce(() => {
+                        generatePortfolio();
+                        updateProgressBar();
+                    }, 500));
+                }
+            });
+
+            // Theme selector
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTheme = this.dataset.theme;
+                    generatePortfolio();
+                });
+            });
+
+            // Dark mode toggle
+            document.getElementById('modeToggle').addEventListener('click', toggleDarkMode);
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            document.getElementById('modeToggle').innerHTML = isDarkMode ? 
+                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            generatePortfolio();
+        }
+
+        function updateProgressBar() {
+            const fields = ['fullName', 'jobTitle', 'email', 'summary', 'experience', 'skills'];
+            let filledCount = 0;
+            
+            fields.forEach(field => {
+                if (document.getElementById(field).value.trim() !== '') {
+                    filledCount++;
+                }
+            });
+            
+            const progress = (filledCount / fields.length) * 100;
+            document.getElementById('profileProgress').style.width = `${progress}%`;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function generatePortfolio() {
+            portfolioData = {
+                fullName: document.getElementById('fullName').value || 'Your Name',
+                jobTitle: document.getElementById('jobTitle').value || 'Your Job Title',
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                linkedin: document.getElementById('linkedin').value,
+                portfolio: document.getElementById('portfolio').value,
+                summary: document.getElementById('summary').value,
+                experience: parseExperience(document.getElementById('experience').value),
+                education: parseEducation(document.getElementById('education').value),
+                skills: parseSkills(document.getElementById('skills').value),
+                projects: parseProjects(document.getElementById('projects').value),
+                customCSS: document.getElementById('customCSS').value
+            };
+
+            renderPortfolio();
+            generateCodePreview();
+        }
+
+        function parseExperience(text) {
+            if (!text.trim()) return [];
+            
+            const experiences = text.split('\n\n').filter(exp => exp.trim());
+            return experiences.map(exp => {
+                const lines = exp.trim().split('\n');
+                if (lines.length >= 1) {
+                    const parts = lines[0].split('|').map(part => part.trim());
+                    return {
+                        title: parts[0] || '',
+                        company: parts[1] || '',
+                        date: parts[2] || '',
+                        description: lines.slice(1).join('\n').trim() || (parts[3] || '')
+                    };
+                }
+                return { title: '', company: '', date: '', description: exp };
+            });
+        }
+
+        function parseEducation(text) {
+            if (!text.trim()) return [];
+            
+            const educations = text.split('\n\n').filter(edu => edu.trim());
+            return educations.map(edu => {
+                const lines = edu.trim().split('\n');
+                if (lines.length >= 1) {
+                    const parts = lines[0].split('|').map(part => part.trim());
+                    return {
+                        degree: parts[0] || '',
+                        school: parts[1] || '',
+                        year: parts[2] || '',
+                        details: lines.slice(1).join('\n').trim() || (parts[3] || '')
+                    };
+                }
+                return { degree: edu, school: '', year: '', details: '' };
+            });
+        }
+
+        function parseProjects(text) {
+            if (!text.trim()) return [];
+            
+            const projects = text.split('\n\n').filter(proj => proj.trim());
+            return projects.map(proj => {
+                const lines = proj.trim().split('\n');
+                if (lines.length >= 1) {
+                    const parts = lines[0].split('|').map(part => part.trim());
+                    return {
+                        name: parts[0] || '',
+                        technologies: parts[1] || '',
+                        description: lines.slice(1).join('\n').trim() || (parts[2] || '')
+                    };
+                }
+                return { name: proj, technologies: '', description: '' };
+            });
+        }
+
+        function parseSkills(text) {
+            if (!text.trim()) return [];
+            return text.split(',').map(skill => skill.trim()).filter(skill => skill);
+        }
+
+        function renderPortfolio() {
+            const preview = document.getElementById('portfolioPreview');
+            const loading = preview.querySelector('.loading');
+            
+            if (loading) {
+                loading.classList.remove('active');
+            }
+
+            const contactItems = [
+                { icon: 'envelope', value: portfolioData.email, type: 'email' },
+                { icon: 'phone', value: portfolioData.phone, type: 'tel' },
+                { icon: 'map-marker-alt', value: portfolioData.location, type: 'text' },
+                { icon: 'linkedin', value: portfolioData.linkedin, type: 'url', brand: true },
+                { icon: 'globe', value: portfolioData.portfolio, type: 'url' }
+            ].filter(item => item.value);
+
+            const contactHTML = contactItems.map(item => 
+                `<div class="contact-item">
+                    <i class="fa${item.brand ? 'b' : 's'} fa-${item.icon}"></i>
+                    ${item.type === 'url' || item.type === 'email' 
+                        ? `<a href="${item.type === 'email' ? 'mailto:' : ''}${item.value}" style="color: inherit; text-decoration: none;">${item.value.replace(/^https?:\/\//, '')}</a>`
+                        : item.value}
+                </div>`
+            ).join('');
+
+            const experienceHTML = portfolioData.experience.map(exp => 
+                `<div class="experience-item">
+                    <div class="item-title">${exp.title}</div>
+                    <div class="item-company">${exp.company}</div>
+                    <div class="item-date">${exp.date}</div>
+                    <div class="item-description">${exp.description.replace(/\n/g, '<br>')}</div>
+                </div>`
+            ).join('');
+
+            const educationHTML = portfolioData.education.map(edu => 
+                `<div class="education-item">
+                    <div class="item-title">${edu.degree}</div>
+                    <div class="item-school">${edu.school}</div>
+                    <div class="item-date">${edu.year}</div>
+                    ${edu.details ? `<div class="item-description">${edu.details.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>`
+            ).join('');
+
+            const projectsHTML = portfolioData.projects.map(proj => 
+                `<div class="experience-item">
+                    <div class="item-title">${proj.name}</div>
+                    <div class="item-company">${proj.technologies}</div>
+                    <div class="item-description">${proj.description.replace(/\n/g, '<br>')}</div>
+                </div>`
+            ).join('');
+
+            const skillsHTML = portfolioData.skills.map(skill => 
+                `<div class="skill-item">${skill}</div>`
+            ).join('');
+
+            preview.innerHTML = `
+                <div class="portfolio-header theme-${currentTheme}">
+                    <div class="portfolio-name">${portfolioData.fullName}</div>
+                    <div class="portfolio-title">${portfolioData.jobTitle}</div>
+                    <div class="portfolio-contact">${contactHTML}</div>
+                </div>
+                <div class="portfolio-content">
+                    ${portfolioData.summary ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-circle"></i> Professional Summary
+                            </div>
+                            <div class="portfolio-summary">${portfolioData.summary.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.experience.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-building"></i> Work Experience
+                            </div>
+                            ${experienceHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.projects.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-project-diagram"></i> Projects
+                            </div>
+                            ${projectsHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.education.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-graduation-cap"></i> Education
+                            </div>
+                            ${educationHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.skills.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-code"></i> Technical Skills
+                            </div>
+                            <div class="skills-grid">${skillsHTML}</div>
+                        </div>
+                    ` : ''}
+                </div>
+                <style>${portfolioData.customCSS}</style>
+            `;
+
+            // Apply theme-specific styles
+            applyThemeStyles(preview);
+        }
+
+        function generateCodePreview() {
+            const codeElement = document.getElementById('generatedCode');
+            if (!codeElement) return;
+            
+            // Generate a simple HTML representation for the code view
+            const code = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${portfolioData.fullName} - Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Portfolio styles will be generated here */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* Additional styles based on the selected theme */
+    </style>
+</head>
+<body>
+    <!-- Portfolio content will be generated here -->
+    <header>
+        <h1>${portfolioData.fullName}</h1>
+        <h2>${portfolioData.jobTitle}</h2>
+        <!-- Contact information and other sections -->
+    </header>
+    <main>
+        <!-- Portfolio sections -->
+    </main>
+</body>
+</html>`;
+            
+            codeElement.textContent = code;
+        }
+
+        function toggleCodeView() {
+            const codeView = document.getElementById('codeView');
+            codeView.classList.toggle('active');
+        }
+
+        function applyThemeStyles(preview) {
+            preview.className = `portfolio-preview theme-${currentTheme}`;
+        }
+
+        function loadSampleResume() {
+            document.getElementById('fullName').value = 'Alex Rodriguez';
+            document.getElementById('jobTitle').value = 'Senior Full-Stack Developer';
+            document.getElementById('email').value = 'alex.rodriguez@email.com';
+            document.getElementById('phone').value = '+1 (555) 123-4567';
+            document.getElementById('location').value = 'Seattle, WA';
+            document.getElementById('linkedin').value = 'https://linkedin.com/in/alexrodriguez';
+            document.getElementById('portfolio').value = 'https://alexrodriguez.dev';
+            document.getElementById('summary').value = 'Innovative Full-Stack Developer with 6+ years of experience building scalable web applications and leading cross-functional teams. Expertise in modern JavaScript frameworks, cloud architecture, and agile methodologies. Proven track record of delivering high-impact solutions that drive business growth and enhance user experience.';
+            document.getElementById('experience').value = 'Senior Software Engineer | Amazon Web Services | 2022 - Present\nLead development of microservices architecture serving 10M+ users daily. Designed and implemented CI/CD pipelines reducing deployment time by 75%. Mentored junior developers and established coding standards across the team.\n\nSoftware Engineer | Microsoft | 2020 - 2022\nDeveloped cloud-native applications using Azure services. Built RESTful APIs handling 1M+ requests per day. Collaborated with product managers to define technical requirements and project roadmaps.\n\nFull-Stack Developer | Startup Inc. | 2018 - 2020\nBuilt responsive web applications using React, Node.js, and MongoDB. Implemented real-time features using WebSocket connections. Optimized application performance resulting in 40% faster load times.';
+            document.getElementById('education').value = 'Bachelor of Science in Computer Science | University of Washington | 2018\nRelevant Coursework: Data Structures, Algorithms, Software Engineering, Database Systems, Computer Networks\n\nCertifications:\nAWS Certified Solutions Architect | 2023\nGoogle Cloud Professional Developer | 2022';
+            document.getElementById('skills').value = 'JavaScript, TypeScript, Python, Java, React, Angular, Node.js, Express.js, AWS, Azure, Docker, Kubernetes, MongoDB, PostgreSQL, Redis, Git, Jenkins, Terraform, GraphQL, REST APIs';
+            document.getElementById('projects').value = 'E-commerce Platform | React, Node.js, MongoDB | Developed a full-stack e-commerce solution with payment integration and admin dashboard. Improved conversion rates by 30% through UI/UX enhancements.\n\nTask Management App | Vue.js, Firebase | Created a collaborative task management application with real-time updates and offline capabilities. Acquired 10,000+ active users within 6 months of launch.';
+            document.getElementById('customCSS').value = '/* Add your custom styles here */\n.portfolio-header {\n  padding: 60px 30px;\n}\n\n.skill-item {\n  background: linear-gradient(135deg, #4285F4 0%, #34A853 100%);\n}';
+            
+            generatePortfolio();
+            updateProgressBar();
+            
+            // Show notification
+            showNotification('Sample resume loaded successfully!', 'success');
+        }
+
+        function optimizeContent() {
+            // Simulate AI optimization
+            const summary = document.getElementById('summary');
+            if (summary.value) {
+                summary.value += ' Optimized for Google recruitment algorithms with relevant keywords and quantifiable achievements.';
+            }
+            
+            const experience = document.getElementById('experience');
+            if (experience.value) {
+                experience.value = experience.value.replace(/Developed/g, 'Engineered scalable')
+                                                  .replace(/Built/g, 'Architected and implemented')
+                                                  .replace(/Managed/g, 'Led cross-functional teams to');
+            }
+            
+            generatePortfolio();
+            showNotification('Content optimized for Google ATS!', 'success');
+        }
+
+        function generateSummary() {
+            const jobTitle = document.getElementById('jobTitle').value || 'software engineer';
+            const skills = document.getElementById('skills').value || 'programming, development';
+            
+            // Simulate AI-generated summary
+            const summary = `Results-driven ${jobTitle} with extensive experience in ${skills.split(',')[0]} and a proven track record of delivering high-impact solutions. Skilled in leveraging cutting-edge technologies to solve complex problems and drive business growth. Strong collaborator with expertise in agile methodologies and cross-functional team leadership.`;
+            
+            document.getElementById('summary').value = summary;
+            generatePortfolio();
+            showNotification('AI-generated summary created!', 'success');
+        }
+
+        function analyzeSkills() {
+            const skills = document.getElementById('skills').value;
+            if (!skills) {
+                showNotification('Please add skills first', 'error');
+                return;
+            }
+            
+            // Simulate skills analysis
+            showNotification('Skills analyzed: 92% match with Google job requirements', 'success');
+        }
+
+        function importFromLinkedIn() {
+            showNotification('LinkedIn import feature would connect to LinkedIn API', 'info');
+        }
+
+        function importFromPDF() {
+            showNotification('PDF import would parse and extract resume content', 'info');
+        }
+
+        function importFromJSON() {
+            showNotification('JSON resume import would load standardized resume data', 'info');
+        }
+
+        function exportHTML() {
+            showNotification('HTML export would download portfolio as HTML file', 'info');
+        }
+
+        function exportPDF() {
+            // Generate PDF from portfolio preview
+            const element = document.getElementById('portfolioPreview');
+            const opt = {
+                margin: 10,
+                filename: `${portfolioData.fullName.replace(/\s+/g, '_')}_Portfolio.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+            showNotification('PDF exported successfully!', 'success');
+        }
+
+        function exportMarkdown() {
+            // This would generate Markdown content
+            showNotification('Markdown export would generate README.md content', 'info');
+        }
+
+        function sharePortfolio() {
+            // This would generate a shareable link
+            showNotification('Shareable link generated!', 'success');
+        }
+
+        function publishToGitHub() {
+            // This would publish to GitHub Pages
+            showNotification('Portfolio published to GitHub Pages!', 'success');
+        }
+
+        function checkCollaboration() {
+            // Simulate real-time collaboration check
+            setTimeout(() => {
+                showNotification('Collaboration session started with 3 participants', 'info');
+            }, 3000);
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '12px 20px';
+            notification.style.borderRadius = '8px';
+            notification.style.color = 'white';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            notification.style.fontWeight = '500';
+            notification.style.transition = 'opacity 0.3s ease';
+            
+            // Set background color based on type
+            if (type === 'success') {
+                notification.style.background = 'var(--google-green)';
+            } else if (type === 'error') {
+                notification.style.background = 'var(--google-red)';
+            } else {
+                notification.style.background = 'var(--primary-blue)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
