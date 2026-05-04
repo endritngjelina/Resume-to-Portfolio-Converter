@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #232F3E;
+            --amazon-orange: #FF9900;
+            --light-blue: #146EB4;
+            --gray-light: #F8F9FA;
+            --gray-medium: #6C757D;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            
+            /* Animation Variables */
+            --animation-fast: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+            --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --easing-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            /* Spacing System */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius System */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 153, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(35, 47, 62, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            animation: containerFadeIn 0.8s ease-out;
+        }
+
+        @keyframes containerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%),
+                linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            animation: headerShimmer 20s linear infinite;
+        }
+
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(0deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 80vh;
+        }
+
+        .input-panel {
+            background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 35px;
+            border-right: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--amazon-orange), var(--light-blue), var(--amazon-orange));
+            opacity: 0.6;
+        }
+
+        .preview-panel {
+            padding: 35px;
+            background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .preview-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--light-blue), var(--amazon-orange), var(--light-blue));
+            opacity: 0.6;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--amazon-orange);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 400;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            position: relative;
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--light-blue);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 
+                0 0 0 4px rgba(20, 110, 180, 0.1),
+                0 4px 12px rgba(20, 110, 180, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px) scale(1.002);
+        }
+
+        .form-control:hover:not(:focus) {
+            border-color: rgba(20, 110, 180, 0.3);
+            transform: translateY(-0.5px);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.08),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.01em;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+            color: white;
+            box-shadow: 
+                0 4px 12px rgba(20, 110, 180, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(20, 110, 180, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--amazon-orange) 0%, #e88900 100%);
+            color: white;
+            box-shadow: 
+                0 4px 12px rgba(255, 153, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(255, 153, 0, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .theme-option {
+            aspect-ratio: 1;
+            border: 3px solid transparent;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-option::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .theme-option:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .theme-option:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.25),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-option.active {
+            border-color: var(--amazon-orange);
+            transform: translateY(-2px) scale(1.08);
+            box-shadow: 
+                0 0 0 2px rgba(255, 153, 0, 0.3),
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-option.active::after {
+            content: '✓';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: var(--amazon-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: white;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-modern { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-professional { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); }
+        .theme-creative { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
+        .theme-minimal { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color: #333; }
+        .theme-tech { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%); }
+
+        .portfolio-preview {
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            min-height: 600px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portfolio-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .portfolio-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .portfolio-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        .portfolio-content {
+            padding: 30px;
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--amazon-orange);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .portfolio-summary {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--gray-medium);
+            text-align: justify;
+        }
+
+        .experience-item, .education-item {
+            background: linear-gradient(145deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(20, 110, 180, 0.1);
+            border-left: 4px solid var(--light-blue);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.05),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .experience-item::before, .education-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(20, 110, 180, 0.05), rgba(255, 153, 0, 0.05));
+            transition: width 0.4s ease;
+            z-index: 0;
+        }
+
+        .experience-item:hover, .education-item:hover {
+            transform: translateX(8px) translateY(-2px);
+            border-left-color: var(--amazon-orange);
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.1),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .experience-item:hover::before, .education-item:hover::before {
+            width: 100%;
+        }
+
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-company, .item-school {
+            font-size: 1rem;
+            color: var(--light-blue);
+            font-weight: 500;
+            margin-bottom: 3px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-date {
+            font-size: 0.9rem;
+            color: var(--gray-medium);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-description {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #555;
+            position: relative;
+            z-index: 1;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .skill-item {
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 4px 12px rgba(20, 110, 180, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .skill-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        .skill-item:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: linear-gradient(135deg, var(--amazon-orange) 0%, #e88900 100%);
+            box-shadow: 
+                0 8px 25px rgba(255, 153, 0, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .skill-item:hover::before {
+            width: 150%;
+            height: 150%;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .export-options {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-medium);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--light-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-suggestions {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--amazon-orange);
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestion-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-item:hover {
+            background: var(--amazon-orange);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Enhanced Components */
+        .enhanced-card {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            box-shadow: 
+                20px 20px 60px #d9d9d9,
+                -20px -20px 60px #ffffff,
+                inset 2px 2px 5px rgba(255, 255, 255, 0.7),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-2xl);
+            transition: all var(--animation-normal) var(--easing-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhanced-card:hover {
+            box-shadow: 
+                25px 25px 75px #d0d0d0,
+                -25px -25px 75px #ffffff,
+                inset 3px 3px 7px rgba(255, 255, 255, 0.8),
+                inset -3px -3px 7px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .interactive-icon {
+            transition: all var(--animation-normal) var(--easing-bounce);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--light-blue), var(--amazon-orange));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .interactive-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left var(--animation-normal) ease;
+        }
+
+        .interactive-icon:hover::before {
+            left: 100%;
+        }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .notification {
+            padding: 18px 24px;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-weight: 600;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideInRight 0.4s var(--easing-bounce);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--error-color), #dc2626);
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Modal System */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--animation-normal) ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-2xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transform: scale(0.8) translateY(20px);
+            transition: all var(--animation-normal) var(--easing-bounce);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Focus Ring Animation */
+        @keyframes focusRingPulse {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+        }
+
+        /* Progress Bar Animation */
+        @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes progressShrink {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        /* Ripple Effect */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all var(--animation-slow) var(--easing-smooth);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .input-panel {
+                border-right: none;
+                border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .input-panel, .preview-panel {
+                padding: 25px 20px;
+            }
+            
+            .controls {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+            
+            .theme-selector {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(30, 41, 59, 0.95);
+            }
+            
+            .input-panel {
+                background: linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
+            }
+            
+            .preview-panel {
+                background: linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+            }
+            
+            .form-control {
+                background: rgba(51, 65, 85, 0.5);
+                border-color: rgba(148, 163, 184, 0.3);
+                color: white;
+            }
+            
+            .form-control:focus {
+                background: rgba(51, 65, 85, 0.8);
+            }
+            
+            .form-group label {
+                color: #e2e8f0;
+            }
+            
+            .ai-suggestions {
+                background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
+            }
+            
+            .suggestion-item {
+                background: rgba(51, 65, 85, 0.5);
+                color: #e2e8f0;
+            }
+        }
+
+        /* Accessibility Improvements */
+        .form-control:focus,
+        .btn:focus,
+        .theme-option:focus {
+            outline: 2px solid var(--amazon-orange);
+            outline-offset: 2px;
+        }
+
+        .btn:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* Print Styles */
+        @media print {
+            .btn,
+            .controls,
+            .ai-suggestions,
+            .export-options {
+                display: none !important;
+            }
+            
+            .portfolio-preview {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+            
+            * {
+                background: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-magic"></i> Resume-to-Portfolio Converter Pro</h1>
+            <p>Transform your resume into a stunning portfolio website instantly</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-file-upload"></i> Input Your Resume
+                    </div>
+                </div>
+
+                <div class="ai-suggestions">
+                    <div class="suggestion-title">
+                        <i class="fas fa-lightbulb"></i> AI-Powered Suggestions
+                    </div>
+                    <div class="suggestion-item" onclick="loadSampleResume()">
+                        <i class="fas fa-user-tie"></i> Load Sample Software Engineer Resume
+                    </div>
+                    <div class="suggestion-item" onclick="optimizeContent()">
+                        <i class="fas fa-rocket"></i> Optimize Content for ATS
+                    </div>
+                    <div class="suggestion-item" onclick="generateSummary()">
+                        <i class="fas fa-brain"></i> Generate Professional Summary
+                    </div>
+                </div>
+
+                <form id="resumeForm">
+                    <div class="form-group">
+                        <label for="fullName">
+                            <i class="fas fa-user"></i> Full Name *
+                        </label>
+                        <input type="text" id="fullName" class="form-control" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobTitle">
+                            <i class="fas fa-briefcase"></i> Job Title *
+                        </label>
+                        <input type="text" id="jobTitle" class="form-control" placeholder="Senior Software Engineer" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" class="form-control" placeholder="john.doe@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i> Phone
+                        </label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </label>
+                        <input type="text" id="location" class="form-control" placeholder="San Francisco, CA">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="linkedin">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </label>
+                        <input type="url" id="linkedin" class="form-control" placeholder="https://linkedin.com/in/johndoe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="portfolio">
+                            <i class="fas fa-globe"></i> Portfolio Website
+                        </label>
+                        <input type="url" id="portfolio" class="form-control" placeholder="https://johndoe.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="summary">
+                            <i class="fas fa-user-circle"></i> Professional Summary
+                        </label>
+                        <textarea id="summary" class="form-control" placeholder="Passionate software engineer with 5+ years of experience..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">
+                            <i class="fas fa-building"></i> Work Experience
+                        </label>
+                        <textarea id="experience" class="form-control" placeholder="Job Title | Company Name | Start Date - End Date | Description..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="education">
+                            <i class="fas fa-graduation-cap"></i> Education
+                        </label>
+                        <textarea id="education" class="form-control" placeholder="Degree | School Name | Graduation Year | Details..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skills">
+                            <i class="fas fa-code"></i> Skills (comma-separated)
+                        </label>
+                        <textarea id="skills" class="form-control" placeholder="JavaScript, Python, React, Node.js, AWS, Docker..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-palette"></i> Choose Theme</label>
+                        <div class="theme-selector">
+                            <div class="theme-option theme-modern active" data-theme="modern">Modern</div>
+                            <div class="theme-option theme-professional" data-theme="professional">Pro</div>
+                            <div class="theme-option theme-creative" data-theme="creative">Creative</div>
+                            <div class="theme-option theme-minimal" data-theme="minimal">Minimal</div>
+                            <div class="theme-option theme-tech" data-theme="tech">Tech</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-eye"></i> Live Preview
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="generatePortfolio()">
+                            <i class="fas fa-sync-alt"></i> Regenerate
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportHTML()">
+                            <i class="fas fa-download"></i> Export HTML
+                        </button>
+                    </div>
+                </div>
+
+                <div id="portfolioPreview" class="portfolio-preview">
+                    <div class="loading active">
+                        <div class="spinner"></div>
+                        <p>Enter your information to see the preview...</p>
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <h4><i class="fas fa-download"></i> Export Options</h4>
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="exportPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn btn-primary" onclick="sharePortfolio()">
+                            <i class="fas fa-share"></i> Share Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadImages()">
+                            <i class="fas fa-images"></i> Export Images
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced JavaScript with new UI features
+        let currentTheme = 'modern';
+        let portfolioData = {};
+        let isGenerating = false;
+
+        // Initialize the application with enhanced features
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            initializeEnhancedComponents();
+            generatePortfolio();
+            setupScrollAnimations();
+            setupAdvancedInteractions();
+        });
+
+        function initializeEnhancedComponents() {
+            // Add enhanced classes to existing elements
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.add('shine-effect', 'btn-ripple');
+            });
+
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.classList.add('magnetic-effect');
+                
+                // Add floating label effect
+                const formGroup = input.closest('.form-group');
+                if (formGroup) {
+                    formGroup.classList.add('form-floating');
+                    const label = formGroup.querySelector('label');
+                    if (label) {
+                        label.classList.add('form-label');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.experience-item, .education-item').forEach(item => {
+                item.classList.add('enhanced-card', 'reveal');
+            });
+
+            document.querySelectorAll('.skill-item').forEach(item => {
+                item.classList.add('magnetic-effect');
+            });
+
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.add('floating-element');
+            });
+
+            // Add notification container
+            const notificationContainer = document.createElement('div');
+            notificationContainer.className = 'notification-container';
+            document.body.appendChild(notificationContainer);
+        }
+
+        function setupAdvancedInteractions() {
+            // Enhanced button interactions
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.setProperty('--hover-scale', '1.05');
+                });
+
+                btn.addEventListener('mouseleave', function() {
+                    this.style.setProperty('--hover-scale', '1');
+                });
+
+                // Add ripple effect
+                btn.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Enhanced form interactions
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.form-group').classList.add('focused');
+                    createFocusRing(this);
+                });
+
+                input.addEventListener('blur', function() {
+                    this.closest('.form-group').classList.remove('focused');
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.value.length > 0) {
+                        this.classList.add('has-content');
+                    } else {
+                        this.classList.remove('has-content');
+                    }
+                });
+            });
+        }
+
+        function createFocusRing(element) {
+            const existing = element.parentNode.querySelector('.focus-ring');
+            if (existing) existing.remove();
+
+            const ring = document.createElement('div');
+            ring.className = 'focus-ring';
+            ring.style.cssText = `
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border: 2px solid var(--amazon-orange);
+                border-radius: inherit;
+                pointer-events: none;
+                opacity: 0;
+                animation: focusRingPulse 0.3s ease-out forwards;
+            `;
+            
+            element.parentNode.style.position = 'relative';
+            element.parentNode.appendChild(ring);
+            
+            setTimeout(() => ring.remove(), 300);
+        }
+
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        function showEnhancedNotification(message, type = 'info', duration = 4000) {
+            const container = document.querySelector('.notification-container');
+            const notification = document.createElement('div');
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-circle'
+            };
+
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="${icons[type]}"></i>
+                <span>${message}</span>
+                <button class="notification-close" onclick="this.parentElement.remove()" style="
+                    background: none; 
+                    border: none; 
+                    color: white; 
+                    font-size: 18px; 
+                    cursor: pointer; 
+                    margin-left: auto;
+                    opacity: 0.8;
+                    transition: opacity 0.2s ease;
+                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            container.appendChild(notification);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, duration);
+
+            // Add progress bar
+            const progressBar = document.createElement('div');
+            progressBar.style.cssText = `
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 3px;
+                background: rgba(255, 255, 255, 0.3);
+                animation: progressShrink ${duration}ms linear forwards;
+            `;
+            notification.appendChild(progressBar);
+        }
+
+        function generatePortfolio() {
+            if (isGenerating) return;
+            isGenerating = true;
+
+            // Show enhanced loading state
+            showGeneratingAnimation();
+
+            portfolioData = {
+                fullName: document.getElementById('fullName').value || 'Your Name',
+                jobTitle: document.getElementById('jobTitle').value || 'Your Job Title',
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                linkedin: document.getElementById('linkedin').value,
+                portfolio: document.getElementById('portfolio').value,
+                summary: document.getElementById('summary').value,
+                experience: parseExperience(document.getElementById('experience').value),
+                education: parseEducation(document.getElementById('education').value),
+                skills: parseSkills(document.getElementById('skills').value)
+            };
+
+            // Simulate processing time for better UX
+            setTimeout(() => {
+                renderPortfolio();
+                hideGeneratingAnimation();
+                isGenerating = false;
+                
+                if (portfolioData.fullName !== 'Your Name') {
+                    showEnhancedNotification('Portfolio updated successfully!', 'success');
+                }
+            }, 800);
+        }
+
+        function showGeneratingAnimation() {
+            const preview = document.getElementById('portfolioPreview');
+            const loadingEl = preview.querySelector('.loading');
+            
+            if (!loadingEl) {
+                const loading = document.createElement('div');
+                loading.className = 'loading active';
+                loading.innerHTML = `
+                    <div class="spinner"></div>
+                    <p style="margin: 0; font-size: 16px; font-weight: 500;">
+                        <span class="gradient-text">Generating your portfolio...</span>
+                    </p>
+                    <div class="progress-bar-container" style="width: 200px; margin: 20px auto 0;">
+                        <div class="progress-bar" style="width: 0%; animation: progressFill 0.8s ease-out forwards;"></div>
+                    </div>
+                `;
+                preview.appendChild(loading);
+            } else {
+                loadingEl.classList.add('active');
+            }
+        }
+
+        function hideGeneratingAnimation() {
+            const preview = document.getElementById('portfolioPreview');
+            const loadingEl = preview.querySelector('.loading');
+            if (loadingEl) {
+                loadingEl.classList.remove('active');
+            }
+        }
+
+        function optimizeContent() {
+            const modal = createModal('ATS Optimization Tips', `
+                <div style="text-align: left;">
+                    <h4 class="gradient-text" style="margin-bottom: 20px;">
+                        <i class="fas fa-robot"></i> AI-Powered Optimization
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(20, 110, 180, 0.05); border-radius: 8px; border-left: 4px solid var(--light-blue);">
+                            <strong>Action Verbs:</strong> Use power words like 'Led', 'Developed', 'Implemented', 'Designed'
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255, 153, 0, 0.05); border-radius: 8px; border-left: 4px solid var(--amazon-orange);">
+                            <strong>Quantify Results:</strong> Include numbers, percentages, and measurable outcomes
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(20, 110, 180, 0.05); border-radius: 8px; border-left: 4px solid var(--light-blue);">
+                            <strong>Keywords:</strong> Include relevant industry and role-specific terms
+                        </li>
+                        <li style="margin-bottom: 15px; padding: 10px; background: rgba(255, 153, 0, 0.05); border-radius: 8px; border-left: 4px solid var(--amazon-orange);">
+                            <strong>Concise Impact:</strong> Keep bullet points clear and achievement-focused
+                        </li>
+                        <li style="padding: 10px; background: rgba(20, 110, 180, 0.05); border-radius: 8px; border-left: 4px solid var(--light-blue);">
+                            <strong>Leadership:</strong> Highlight collaboration and team leadership experiences
+                        </li>
+                    </ul>
+                </div>
+            `);
+            showModal(modal);
+        }
+
+        function createModal(title, content) {
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'modal-overlay';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            modalContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--gray-light);">
+                    <h3 style="margin: 0; color: var(--primary-blue);">${title}</h3>
+                    <button class="btn-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-medium); padding: 5px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                ${content}
+            `;
+
+            modalOverlay.appendChild(modalContent);
+            
+            modalContent.querySelector('.btn-close').addEventListener('click', () => {
+                hideModal(modalOverlay);
+            });
+            
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    hideModal(modalOverlay);
+                }
+            });
+
+            return modalOverlay;
+        }
+
+        function showModal(modal) {
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+
+        function exportHTML() {
+            showEnhancedNotification('Preparing your portfolio for export...', 'info', 2000);
+            
+            setTimeout(() => {
+                const portfolioHTML = generateFullHTML();
+                const blob = new Blob([portfolioHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${portfolioData.fullName.replace(/\s+/g, '_')}_Portfolio.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showEnhancedNotification('Portfolio HTML exported successfully! 🎉', 'success');
+            }, 1000);
+        }
+
+        function sharePortfolio() {
+            const shareData = {
+                title: `${portfolioData.fullName} - Portfolio`,
+                text: `Check out ${portfolioData.fullName}'s professional portfolio`,
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).then(() => {
+                    showEnhancedNotification('Portfolio shared successfully!', 'success');
+                }).catch(() => {
+                    fallbackShare();
+                });
+            } else {
+                fallbackShare();
+            }
+        }
+
+        function fallbackShare() {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?shared=${Date.now()}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showEnhancedNotification('Shareable link copied to clipboard! 📋', 'success');
+            }).catch(() => {
+                const modal = createModal('Share Portfolio', `
+                    <div style="text-align: center;">
+                        <p style="margin-bottom: 20px;">Copy this link to share your portfolio:</p>
+                        <input type="text" value="${shareUrl}" readonly style="width: 100%; padding: 12px; border: 2px solid var(--light-blue); border-radius: 8px; margin-bottom: 15px; font-family: monospace;" onclick="this.select()">
+                        <button class="btn btn-primary" onclick="navigator.clipboard.writeText('${shareUrl}'); hideModal(this.closest('.modal-overlay')); showEnhancedNotification('Link copied to clipboard!', 'success')">
+                            <i class="fas fa-copy"></i> Copy to Clipboard
+                        </button>
+                    </div>
+                `);
+                showModal(modal);
+            });
+        }
+
+        function exportPDF() {
+            showEnhancedNotification('PDF export is a premium feature. Upgrade to access this capability.', 'info');
+        }
+
+        function downloadImages() {
+            showEnhancedNotification('Image export is a premium feature. Upgrade to access this capability.', 'info');
+        }
+
+        function loadSampleResume() {
+            document.getElementById('fullName').value = 'Alex Rodriguez';
+            document.getElementById('jobTitle').value = 'Senior Full-Stack Developer';
+            document.getElementById('email').value = 'alex.rodriguez@email.com';
+            document.getElementById('phone').value = '+1 (555) 123-4567';
+            document.getElementById('location').value = 'Seattle, WA';
+            document.getElementById('linkedin').value = 'https://linkedin.com/in/alexrodriguez';
+            document.getElementById('portfolio').value = 'https://alexrodriguez.dev';
+            document.getElementById('summary').value = 'Innovative Full-Stack Developer with 6+ years of experience building scalable web applications and leading cross-functional teams. Expertise in modern JavaScript frameworks, cloud architecture, and agile methodologies. Proven track record of delivering high-impact solutions that drive business growth and enhance user experience.';
+            document.getElementById('experience').value = `Senior Software Engineer | Amazon Web Services | 2022 - Present
+Lead development of microservices architecture serving 10M+ users daily. Designed and implemented CI/CD pipelines reducing deployment time by 75%. Mentored junior developers and established coding standards across the team.
+
+Software Engineer | Microsoft | 2020 - 2022
+Developed cloud-native applications using Azure services. Built RESTful APIs handling 1M+ requests per day. Collaborated with product managers to define technical requirements and project roadmaps.
+
+Full-Stack Developer | Startup Inc. | 2018 - 2020
+Built responsive web applications using React, Node.js, and MongoDB. Implemented real-time features using WebSocket connections. Optimized application performance resulting in 40% faster load times.`;
+            document.getElementById('education').value = `Bachelor of Science in Computer Science | University of Washington | 2018
+Relevant Coursework: Data Structures, Algorithms, Software Engineering, Database Systems, Computer Networks
+
+Certifications:
+AWS Certified Solutions Architect | 2023
+Google Cloud Professional Developer | 2022`;
+            document.getElementById('skills').value = 'JavaScript, TypeScript, Python, Java, React, Angular, Node.js, Express.js, AWS, Azure, Docker, Kubernetes, MongoDB, PostgreSQL, Redis, Git, Jenkins, Terraform, GraphQL, REST APIs';
+            generatePortfolio();
+            showEnhancedNotification('Sample resume loaded successfully!', 'success');
+        }
+
+        function generateSummary() {
+            const name = document.getElementById('fullName').value || 'your';
+            const jobTitle = document.getElementById('jobTitle').value || 'professional';
+            
+            if (!document.getElementById('summary').value) {
+                document.getElementById('summary').value = `Results-driven ${jobTitle} with a proven track record of delivering high-quality solutions. Passionate about leveraging cutting-edge technologies to solve complex problems and drive business growth. Strong collaborator with excellent communication skills and a commitment to continuous learning and professional development.`;
+                generatePortfolio();
+                showEnhancedNotification('Professional summary generated!', 'success');
+            } else {
+                showEnhancedNotification('You already have a summary. Edit it manually for best results.', 'info');
+            }
+        }
+
+        function setupEventListeners() {
+            // Form input listeners
+            const formElements = ['fullName', 'jobTitle', 'email', 'phone', 'location', 'linkedin', 'portfolio', 'summary', 'experience', 'education', 'skills'];
+            formElements.forEach(id => {
+                const element = document.getElementById(id);
+                element.addEventListener('input', debounce(generatePortfolio, 500));
+            });
+
+            // Theme selector
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTheme = this.dataset.theme;
+                    generatePortfolio();
+                });
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function parseExperience(text) {
+            if (!text.trim()) return [];
+            
+            const experiences = text.split('\n\n').filter(exp => exp.trim());
+            return experiences.map(exp => {
+                const lines = exp.trim().split('\n');
+                if (lines.length >= 3) {
+                    const [title, company, date, ...description] = lines;
+                    return {
+                        title: title.split('|')[0]?.trim() || '',
+                        company: title.split('|')[1]?.trim() || company.trim(),
+                        date: title.split('|')[2]?.trim() || date.trim(),
+                        description: description.join('\n').trim() || lines.slice(3).join('\n').trim()
+                    };
+                }
+                return { title: '', company: '', date: '', description: exp };
+            });
+        }
+
+        function parseEducation(text) {
+            if (!text.trim()) return [];
+            
+            const educations = text.split('\n\n').filter(edu => edu.trim());
+            return educations.map(edu => {
+                const lines = edu.trim().split('\n');
+                if (lines.length >= 2) {
+                    const [degree, school, year, ...details] = lines;
+                    return {
+                        degree: degree.split('|')[0]?.trim() || degree,
+                        school: degree.split('|')[1]?.trim() || school,
+                        year: degree.split('|')[2]?.trim() || year,
+                        details: details.join('\n').trim()
+                    };
+                }
+                return { degree: edu, school: '', year: '', details: '' };
+            });
+        }
+
+        function parseSkills(text) {
+            if (!text.trim()) return [];
+            return text.split(',').map(skill => skill.trim()).filter(skill => skill);
+        }
+
+        function renderPortfolio() {
+            const preview = document.getElementById('portfolioPreview');
+            const loading = preview.querySelector('.loading');
+            
+            if (loading) {
+                loading.classList.remove('active');
+            }
+
+            const contactItems = [
+                { icon: 'envelope', value: portfolioData.email, type: 'email' },
+                { icon: 'phone', value: portfolioData.phone, type: 'tel' },
+                { icon: 'map-marker-alt', value: portfolioData.location, type: 'text' },
+                { icon: 'linkedin', value: portfolioData.linkedin, type: 'url', brand: true },
+                { icon: 'globe', value: portfolioData.portfolio, type: 'url' }
+            ].filter(item => item.value);
+
+            const contactHTML = contactItems.map(item => 
+                `<div class="contact-item">
+                    <i class="fa${item.brand ? 'b' : 's'} fa-${item.icon}"></i>
+                    ${item.type === 'url' || item.type === 'email' 
+                        ? `<a href="${item.type === 'email' ? 'mailto:' : ''}${item.value}" style="color: inherit; text-decoration: none;">${item.value.replace(/^https?:\/\//, '')}</a>`
+                        : item.value}
+                </div>`
+            ).join('');
+
+            const experienceHTML = portfolioData.experience.map(exp => 
+                `<div class="experience-item">
+                    <div class="item-title">${exp.title}</div>
+                    <div class="item-company">${exp.company}</div>
+                    <div class="item-date">${exp.date}</div>
+                    <div class="item-description">${exp.description.replace(/\n/g, '<br>')}</div>
+                </div>`
+            ).join('');
+
+            const educationHTML = portfolioData.education.map(edu => 
+                `<div class="education-item">
+                    <div class="item-title">${edu.degree}</div>
+                    <div class="item-school">${edu.school}</div>
+                    <div class="item-date">${edu.year}</div>
+                    ${edu.details ? `<div class="item-description">${edu.details.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>`
+            ).join('');
+
+            const skillsHTML = portfolioData.skills.map(skill => 
+                `<div class="skill-item">${skill}</div>`
+            ).join('');
+
+            preview.innerHTML = `
+                <div class="portfolio-header theme-${currentTheme}">
+                    <div class="portfolio-name">${portfolioData.fullName}</div>
+                    <div class="portfolio-title">${portfolioData.jobTitle}</div>
+                    <div class="portfolio-contact">${contactHTML}</div>
+                </div>
+                <div class="portfolio-content">
+                    ${portfolioData.summary ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-circle"></i> Professional Summary
+                            </div>
+                            <div class="portfolio-summary">${portfolioData.summary.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.experience.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-building"></i> Work Experience
+                            </div>
+                            ${experienceHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.education.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-graduation-cap"></i> Education
+                            </div>
+                            ${educationHTML}
+                        </div>
+                    ` : ''}
+                    
+                    ${portfolioData.skills.length > 0 ? `
+                        <div class="portfolio-section">
+                            <div class="section-title">
+                                <i class="fas fa-code"></i> Technical Skills
+                            </div>
+                            <div class="skills-grid">${skillsHTML}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Apply theme-specific styles
+            applyThemeStyles(preview);
+        }
+
+        function applyThemeStyles(preview) {
+            preview.className = `portfolio-preview theme-${currentTheme}`;
+        }
+
+        function generateFullHTML() {
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${portfolioData.fullName} - Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .portfolio-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .portfolio-title {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 1rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+        }
+        .portfolio-content {
+            padding: 30px;
+        }
+        .portfolio-section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--amazon-orange);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .portfolio-summary {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        .experience-item, .education-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--light-blue);
+        }
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+        .item-company, .item-school {
+            font-size: 1.1rem;
+            color: var(--light-blue);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .item-date {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        .item-description {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #555;
+        }
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .skill-item {
+            background: var(--light-blue);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .portfolio-name {
+                font-size: 2rem;
+            }
+            .portfolio-title {
+                font-size: 1.2rem;
+            }
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${document.getElementById('portfolioPreview').innerHTML}
+    </div>
+</body>
+</html>`;
+        }
+    </script>
+</body>
+</html>
