@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter Pro | Professional Edition</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    <style>
+        :root {
+            --ms-blue: #0078d4;
+            --ms-blue-dark: #106ebe;
+            --ms-blue-light: #40e0d0;
+            --ms-gray-dark: #323130;
+            --ms-gray-medium: #605e5c;
+            --ms-gray-light: #f3f2f1;
+            --ms-white: #ffffff;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --shadow-light: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 16px rgba(0,0,0,0.15);
+            --shadow-heavy: 0 8px 32px rgba(0,0,0,0.2);
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--ms-gray-dark);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: 80vh;
+        }
+
+        .input-panel {
+            background: var(--ms-white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow-heavy);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--ms-gray-light);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--ms-gray-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--ms-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--ms-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--ms-gray-light);
+            color: var(--ms-gray-dark);
+            border: 1px solid var(--ms-gray-medium);
+        }
+
+        .btn-secondary:hover {
+            background: var(--ms-gray-medium);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 400px;
+            padding: 20px;
+            border: 2px solid var(--ms-gray-light);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: 'Segoe UI', monospace;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: var(--ms-blue);
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+            background: white;
+        }
+
+        .preview-panel {
+            background: var(--ms-white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .theme-selector {
+            padding: 8px 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-selector:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .portfolio-preview {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--ms-white);
+            position: relative;
+        }
+
+        /* Portfolio Themes */
+        .theme-modern {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .theme-professional {
+            background: #f8f9fa;
+            color: var(--ms-gray-dark);
+        }
+
+        .theme-creative {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: var(--ms-gray-dark);
+        }
+
+        .theme-minimal {
+            background: white;
+            color: var(--ms-gray-dark);
+            border-left: 5px solid var(--ms-blue);
+        }
+
+        .theme-dark {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .theme-material {
+            background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+            color: white;
+        }
+
+        .portfolio-content {
+            padding: 40px;
+            line-height: 1.6;
+            min-height: 100%;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-content {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .section-content:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .job-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .company-date {
+            opacity: 0.8;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .stats-bar {
+            background: rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .export-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--ms-gray-light);
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: var(--ms-gray-medium);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--ms-gray-light);
+            border-top: 3px solid var(--ms-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--ms-gray-medium);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0,120,212,0.05);
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--ms-blue);
+            background: rgba(0,120,212,0.1);
+        }
+
+        .file-upload-area i {
+            font-size: 2.5rem;
+            color: var(--ms-blue);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area p {
+            margin-bottom: 10px;
+            color: var(--ms-gray-medium);
+        }
+
+        .file-upload-area span {
+            font-size: 0.9rem;
+            color: var(--ms-gray-dark);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--ms-gray-light);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--ms-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            max-width: 350px;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.info {
+            background: var(--ms-blue);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+            color: var(--ms-gray-dark);
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--ms-gray-dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .portfolio-preview {
+                height: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .input-panel, .preview-panel {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .portfolio-content {
+                padding: 20px;
+            }
+            
+            .portfolio-name {
+                font-size: 2rem;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .preview-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .preview-controls {
+                justify-content: center;
+            }
+        }
+
+        /* Animation Effects */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-magic"></i> Resume-to-Portfolio Converter Pro</h1>
+            <p>Transform your resume into a stunning, professional portfolio website instantly</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-file-text"></i>
+                        Resume Input
+                    </div>
+                    <div class="tooltip">
+                        <i class="fas fa-question-circle" style="color: var(--ms-blue);"></i>
+                        <span class="tooltiptext">Paste your resume text or upload a file</span>
+                    </div>
+                </div>
+
+                <div class="file-upload-area" id="fileUploadArea">
+                    <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx" style="display: none;">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your resume file here</p>
+                    <span>or</span>
+                    <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-file-upload"></i> Browse Files
+                    </button>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="loadSampleResume()">
+                        <i class="fas fa-download"></i> Load Sample
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearInput()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="btn btn-primary" onclick="parseResume()">
+                        <i class="fas fa-cogs"></i> Generate Portfolio
+                    </button>
+                    <button class="btn btn-success" onclick="analyzeResume()">
+                        <i class="fas fa-chart-line"></i> Analyze
+                    </button>
+                </div>
+
+                <textarea 
+                    class="textarea" 
+                    id="resumeInput" 
+                    placeholder="Paste your resume content here...&#10;&#10;Tip: Include sections like:&#10;• Personal Information (Name, Email, Phone)&#10;• Professional Summary&#10;• Work Experience&#10;• Education&#10;• Skills&#10;• Certifications&#10;• Projects"
+                    oninput="autoParseResume()"
+                ></textarea>
+
+                <div class="export-section">
+                    <h3 style="margin-bottom: 15px; color: var(--ms-gray-dark);">
+                        <i class="fas fa-download"></i> Export Options
+                    </h3>
+                    <div class="export-buttons">
+                        <button class="btn btn-primary" onclick="exportAsHTML()">
+                            <i class="fas fa-code"></i> Export HTML
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportAsPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="sharePortfolio()">
+                            <i class="fas fa-share"></i> Share Link
+                        </button>
+                        <button class="btn btn-secondary" onclick="saveToLocalStorage()">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <div class="panel-title">
+                        <i class="fas fa-eye"></i>
+                        Live Portfolio Preview
+                    </div>
+                    <div class="preview-controls">
+                        <select class="theme-selector" id="themeSelector" onchange="changeTheme()">
+                            <option value="modern">Modern</option>
+                            <option value="professional">Professional</option>
+                            <option value="creative">Creative</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="dark">Dark</option>
+                            <option value="material">Material</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="portfolio-preview" id="portfolioPreview">
+                    <div class="loading-indicator" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        Generating your portfolio...
+                    </div>
+                    
+                    <div class="portfolio-content theme-modern" id="portfolioContent">
+                        <div style="text-align: center; padding: 100px 20px; color: rgba(255,255,255,0.7);">
+                            <i class="fas fa-upload" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <h2 style="margin-bottom: 10px;">Ready to Create Your Portfolio?</h2>
+                            <p style="font-size: 1.1rem;">Paste your resume content and watch the magic happen!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let parsedData = {};
+        let currentTheme = 'modern';
+        let resumeAnalysis = {};
+
+        // Initialize the application
+        function init() {
+            // Load saved resume if exists
+            const savedResume = localStorage.getItem('savedResume');
+            if (savedResume) {
+                document.getElementById('resumeInput').value = savedResume;
+                parseResume();
+            }
+
+            // Set up file upload handlers
+            setupFileUpload();
+            
+            // Add keyboard shortcuts info
+            setTimeout(() => {
+                setupTooltips();
+            }, 500);
+        }
+
+        // Set up file upload functionality
+        function setupFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+            
+            // Drag and drop handlers
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--ms-blue)';
+                fileUploadArea.style.backgroundColor = 'rgba(0,120,212,0.15)';
+            });
+            
+            fileUploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--ms-gray-medium)';
+                fileUploadArea.style.backgroundColor = 'rgba(0,120,212,0.05)';
+            });
+            
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--ms-gray-medium)';
+                fileUploadArea.style.backgroundColor = 'rgba(0,120,212,0.05)';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+            
+            // Handle file upload
+            function handleFileUpload(file) {
+                const validTypes = ['text/plain', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                
+                if (!validTypes.includes(file.type)) {
+                    showNotification('Please upload a TXT, PDF, or DOC file', 'error');
+                    return;
+                }
+                
+                // Show progress bar
+                progressBar.style.display = 'block';
+                
+                // Simulate progress for demo purposes
+                let progressValue = 0;
+                const progressInterval = setInterval(() => {
+                    progressValue += 5;
+                    progress.style.width = `${progressValue}%`;
+                    
+                    if (progressValue >= 100) {
+                        clearInterval(progressInterval);
+                        
+                        if (file.type === 'text/plain') {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                document.getElementById('resumeInput').value = e.target.result;
+                                parseResume();
+                                progressBar.style.display = 'none';
+                                progress.style.width = '0%';
+                            };
+                            reader.readAsText(file);
+                        } else {
+                            // For PDF and DOC files, we would need server-side processing
+                            // This is just a simulation for the demo
+                            setTimeout(() => {
+                                showNotification('File uploaded successfully. For PDF/DOC files, text extraction is simulated in this demo.', 'info');
+                                progressBar.style.display = 'none';
+                                progress.style.width = '0%';
+                                
+                                // Load sample resume as placeholder
+                                loadSampleResume();
+                            }, 500);
+                        }
+                    }
+                }, 100);
+            }
+        }
+
+        // Set up tooltips
+        function setupTooltips() {
+            const tooltips = {
+                'parseBtn': 'Ctrl+Enter to generate portfolio',
+                'exportHtmlBtn': 'Ctrl+E to export as HTML', 
+                'loadSampleBtn': 'Ctrl+L to load sample',
+                'analyzeBtn': 'Analyze your resume for improvements'
+            };
+
+            // Add tooltips to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                const text = btn.textContent.trim();
+                if (text.includes('Generate Portfolio')) {
+                    btn.title = tooltips.parseBtn;
+                    btn.id = 'parseBtn';
+                } else if (text.includes('Export HTML')) {
+                    btn.title = tooltips.exportHtmlBtn;
+                    btn.id = 'exportHtmlBtn';
+                } else if (text.includes('Load Sample')) {
+                    btn.title = tooltips.loadSampleBtn;
+                    btn.id = 'loadSampleBtn';
+                } else if (text.includes('Analyze')) {
+                    btn.title = tooltips.analyzeBtn;
+                    btn.id = 'analyzeBtn';
+                }
+            });
+        }
+
+        // Auto-parse resume with debouncing
+        let parseTimeout;
+        function autoParseResume() {
+            clearTimeout(parseTimeout);
+            parseTimeout = setTimeout(() => {
+                const input = document.getElementById('resumeInput').value.trim();
+                if (input.length > 50) {
+                    parseResume();
+                }
+            }, 1000);
+        }
+
+        function loadSampleResume() {
+            const sampleResume = `JOHN MICHAEL SMITH
+Senior Software Engineer | Cloud Specialist
+Email: john.smith@email.com | Phone: (555) 123-4567 
+LinkedIn: linkedin.com/in/johnsmith | GitHub: github.com/johnsmith
+Location: Seattle, WA | Portfolio: johnsmith.dev
+
+PROFESSIONAL SUMMARY
+Innovative software engineer with 8+ years of experience in full-stack development, cloud computing, and team leadership. Proven track record of delivering scalable solutions and leading cross-functional teams. Expert in modern web technologies, microservices architecture, and DevOps practices. Passionate about mentoring junior developers and contributing to open-source projects.
+
+WORK EXPERIENCE
+
+Senior Software Engineer | Microsoft Corporation | Redmond, WA | 2020 - Present
+• Led development of Azure DevOps features used by 2M+ developers worldwide
+• Architected microservices handling 100K+ requests per second with 99.9% uptime
+• Mentored 5 junior engineers and established best practices for code quality
+• Implemented CI/CD pipelines reducing deployment time by 60%
+• Technologies: Azure, .NET Core, Kubernetes, React, TypeScript
+
+Software Engineer | Amazon Web Services | Seattle, WA | 2018 - 2020
+• Developed serverless applications using AWS Lambda and API Gateway
+• Built real-time analytics dashboard processing 50GB+ data daily
+• Collaborated with product managers to deliver customer-facing features
+• Achieved 40% improvement in application performance through optimization
+• Technologies: AWS, Node.js, Python, DynamoDB, React
+
+Full Stack Developer | Tech Startup Inc. | San Francisco, CA | 2016 - 2018
+• Built responsive web applications using React, Node.js, and MongoDB
+• Implemented payment processing system handling $2M+ annual transactions
+• Designed RESTful APIs serving mobile and web applications
+• Reduced load times by 50% through code splitting and lazy loading
+• Technologies: JavaScript, React, Node.js, MongoDB, Stripe API
+
+EDUCATION
+
+Master of Science in Computer Science | University of Washington | 2016
+• GPA: 3.8/4.0 | Specialization: Distributed Systems
+• Thesis: "Scalable Microservices Architecture for Cloud-Native Applications"
+
+Bachelor of Science in Software Engineering | Seattle University | 2014
+• GPA: 3.9/4.0 | Minor: Mathematics
+• President of Computer Science Society
+
+TECHNICAL SKILLS
+
+Programming Languages: JavaScript, TypeScript, Python, C#, Java, Go, Rust
+Frontend Technologies: React, Vue.js, Angular, HTML5, CSS3, Sass, Webpack
+Backend Technologies: Node.js, .NET Core, Express.js, Django, Flask, Spring Boot
+Cloud Platforms: Microsoft Azure, AWS, Google Cloud Platform, Docker, Kubernetes
+Databases: SQL Server, PostgreSQL, MongoDB, Redis, CosmosDB, DynamoDB
+DevOps Tools: Azure DevOps, Jenkins, GitHub Actions, Terraform, Ansible
+Other: Git, Agile/Scrum, Machine Learning, GraphQL, Elasticsearch, RabbitMQ
+
+CERTIFICATIONS
+• Microsoft Azure Solutions Architect Expert (2021)
+• AWS Certified Solutions Architect (2020)
+• Certified Kubernetes Administrator (2021)
+• Google Cloud Professional Developer (2019)
+
+PROJECTS
+
+E-Commerce Platform | 2021
+• Built scalable e-commerce platform using microservices architecture
+• Implemented real-time inventory management and order processing
+• Achieved 99.99% uptime with auto-scaling capabilities
+• Technologies: .NET Core, React, Kubernetes, Redis, PostgreSQL
+
+AI-Powered Analytics Tool | 2020
+• Developed machine learning models for predictive analytics
+• Created interactive dashboards with real-time data visualization
+• Reduced analysis time by 70% for business stakeholders
+• Technologies: Python, TensorFlow, React, D3.js, FastAPI
+
+Open Source Contributions
+• Contributed to React.js core functionality (5 PRs merged)
+• Maintainer of popular UI component library (2K+ GitHub stars)
+• Created developer tools browser extension (10K+ users)
+
+LANGUAGES
+• English: Native
+• Spanish: Fluent
+• French: Intermediate
+
+AWARDS & RECOGNITION
+• Microsoft MVP Award (2020, 2021)
+• AWS Community Builder (2019)
+• Hackathon Winner - TechCrunch Disrupt (2017)`;
+
+            document.getElementById('resumeInput').value = sampleResume;
+            parseResume();
+        }
+
+        function clearInput() {
+            document.getElementById('resumeInput').value = '';
+            showEmptyState();
+        }
+
+        function showLoading() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('portfolioContent').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('portfolioContent').style.display = 'block';
+        }
+
+        function showEmptyState() {
+            const content = `
+                <div style="text-align: center; padding: 100px 20px; color: rgba(255,255,255,0.7);">
+                    <i class="fas fa-upload" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <h2 style="margin-bottom: 10px;">Ready to Create Your Portfolio?</h2>
+                    <p style="font-size: 1.1rem;">Paste your resume content and watch the magic happen!</p>
+                </div>
+            `;
+            document.getElementById('portfolioContent').innerHTML = content;
+            document.getElementById('portfolioContent').classList.add('theme-modern');
+            changeTheme();
+        }
+
+        function parseResume() {
+            const resumeText = document.getElementById('resumeInput').value.trim();
+            
+            if (!resumeText) {
+                showEmptyState();
+                return;
+            }
+
+            showLoading();
+
+            // Simulate processing time for professional feel
+            setTimeout(() => {
+                try {
+                    parsedData = parseResumeContent(resumeText);
+                    generatePortfolio(parsedData);
+                    hideLoading();
+                    analyzeResumeContent(parsedData);
+                } catch (error) {
+                    console.error('Error parsing resume:', error);
+                    hideLoading();
+                    showNotification('Error parsing resume. Please check the format.', 'error');
+                }
+            }, 1500);
+        }
+
+        function parseResumeContent(text) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            const data = {
+                name: '',
+                title: '',
+                contact: {
+                    email: '',
+                    phone: '',
+                    linkedin: '',
+                    github: '',
+                    location: '',
+                    portfolio: ''
+                },
+                summary: '',
+                experience: [],
+                education: [],
+                skills: [],
+                certifications: [],
+                projects: [],
+                languages: [],
+                awards: []
+            };
+
+            let currentSection = '';
+            let currentItem = null;
+
+            // Extract name (usually first line)
+            if (lines.length > 0) {
+                data.name = lines[0];
+            }
+
+            // Extract title and contact info (usually second line)
+            if (lines.length > 1) {
+                const secondLine = lines[1];
+                
+                // Check if it's a title line (not containing contact info)
+                if (!secondLine.includes('@') && !secondLine.includes('|') && 
+                    !secondLine.toLowerCase().includes('phone') && 
+                    !secondLine.toLowerCase().includes('email')) {
+                    data.title = secondLine;
+                }
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const lowerLine = line.toLowerCase();
+
+                // Extract contact information from any line
+                if (line.includes('@')) {
+                    const emailMatch = line.match(/[\w.-]+@[\w.-]+\.\w+/);
+                    if (emailMatch) data.contact.email = emailMatch[0];
+                }
+                if (line.includes('(') && line.includes(')') && (line.includes('phone') || /(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4})/.test(line))) {
+                    const phoneMatch = line.match(/(\(\d{3}\)\s?\d{3}-\d{4}|\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4})/);
+                    if (phoneMatch) data.contact.phone = phoneMatch[0];
+                }
+                if (lowerLine.includes('linkedin')) {
+                    data.contact.linkedin = extractUrl(line);
+                }
+                if (lowerLine.includes('github')) {
+                    data.contact.github = extractUrl(line);
+                }
+                if (lowerLine.includes('portfolio') || lowerLine.includes('website')) {
+                    data.contact.portfolio = extractUrl(line);
+                }
+                if (lowerLine.includes('location')) {
+                    data.contact.location = line.split(':').pop().trim();
+                }
+
+                // Identify sections
+                if (lowerLine.includes('summary') || lowerLine.includes('objective')) {
+                    currentSection = 'summary';
+                    continue;
+                } else if (lowerLine.includes('experience') || lowerLine.includes('employment') || lowerLine.includes('work history')) {
+                    currentSection = 'experience';
+                    continue;
+                } else if (lowerLine.includes('education')) {
+                    currentSection = 'education';
+                    continue;
+                } else if (lowerLine.includes('skills') || lowerLine.includes('technical')) {
+                    currentSection = 'skills';
+                    continue;
+                } else if (lowerLine.includes('certification') || lowerLine.includes('certificate')) {
+                    currentSection = 'certifications';
+                    continue;
+                } else if (lowerLine.includes('project')) {
+                    currentSection = 'projects';
+                    continue;
+                } else if (lowerLine.includes('language')) {
+                    currentSection = 'languages';
+                    continue;
+                } else if (lowerLine.includes('award') || lowerLine.includes('honor') || lowerLine.includes('recognition')) {
+                    currentSection = 'awards';
+                    continue;
+                }
+
+                // Parse content based on current section
+                if (currentSection === 'summary' && line && !line.includes('EXPERIENCE')) {
+                    data.summary += line + ' ';
+                } else if (currentSection === 'experience') {
+                    if (line.includes('|') && (line.includes('20') || line.includes('Present') || line.includes('Current'))) {
+                        // Job entry
+                        const parts = line.split('|').map(p => p.trim());
+                        currentItem = {
+                            title: parts[0] || '',
+                            company: parts[1] || '',
+                            location: parts[2] || '',
+                            date: parts[3] || '',
+                            description: [],
+                            technologies: []
+                        };
+                        data.experience.push(currentItem);
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (currentItem) {
+                            const description = line.substring(1).trim();
+                            currentItem.description.push(description);
+                            
+                            // Extract technologies from description
+                            const techKeywords = ['React', 'Angular', 'Vue', 'Node', 'Python', 'Java', 'AWS', 'Azure', 'Docker', 'Kubernetes', 'SQL', 'MongoDB', 'TensorFlow', 'Machine Learning'];
+                            techKeywords.forEach(tech => {
+                                if (description.includes(tech) && !currentItem.technologies.includes(tech)) {
+                                    currentItem.technologies.push(tech);
+                                }
+                            });
+                        }
+                    }
+                } else if (currentSection === 'education') {
+                    if (line.includes('|')) {
+                        const parts = line.split('|').map(p => p.trim());
+                        data.education.push({
+                            degree: parts[0] || '',
+                            school: parts[1] || '',
+                            location: parts[2] || '',
+                            year: parts[3] || '',
+                            details: []
+                        });
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (data.education.length > 0) {
+                            data.education[data.education.length - 1].details.push(line.substring(1).trim());
+                        }
+                    }
+                } else if (currentSection === 'skills') {
+                    if (line.includes(':')) {
+                        const [category, skills] = line.split(':');
+                        if (skills) {
+                            const skillList = skills.split(',').map(s => s.trim()).filter(s => s);
+                            data.skills.push({
+                                category: category.trim(),
+                                items: skillList
+                            });
+                        }
+                    } else if (line && !lowerLine.includes('programming') && !lowerLine.includes('languages')) {
+                        const skills = line.split(',').map(s => s.trim()).filter(s => s);
+                        if (skills.length > 0) {
+                            if (data.skills.length === 0) {
+                                data.skills.push({ category: 'Technical Skills', items: [] });
+                            }
+                            data.skills[0].items.push(...skills);
+                        }
+                    }
+                } else if (currentSection === 'certifications') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.certifications.push(line.substring(1).trim());
+                    } else if (line) {
+                        data.certifications.push(line);
+                    }
+                } else if (currentSection === 'projects') {
+                    if (line.includes('|')) {
+                        const parts = line.split('|').map(p => p.trim());
+                        currentItem = {
+                            name: parts[0] || '',
+                            date: parts[1] || '',
+                            description: [],
+                            technologies: []
+                        };
+                        data.projects.push(currentItem);
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (currentItem) {
+                            const description = line.substring(1).trim();
+                            currentItem.description.push(description);
+                            
+                            // Extract technologies from description
+                            const techKeywords = ['React', 'Angular', 'Vue', 'Node', 'Python', 'Java', 'AWS', 'Azure', 'Docker', 'Kubernetes', 'SQL', 'MongoDB', 'TensorFlow', 'Machine Learning'];
+                            techKeywords.forEach(tech => {
+                                if (description.includes(tech) && !currentItem.technologies.includes(tech)) {
+                                    currentItem.technologies.push(tech);
+                                }
+                            });
+                        }
+                    }
+                } else if (currentSection === 'languages') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.languages.push(line.substring(1).trim());
+                    } else if (line.includes(':')) {
+                        data.languages.push(line);
+                    }
+                } else if (currentSection === 'awards') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.awards.push(line.substring(1).trim());
+                    } else if (line) {
+                        data.awards.push(line);
+                    }
+                }
+            }
+
+            // Clean up data
+            data.summary = data.summary.trim();
+            
+            // Remove duplicate skills
+            if (data.skills.length > 0) {
+                data.skills.forEach(skillCategory => {
+                    skillCategory.items = [...new Set(skillCategory.items)];
+                });
+            }
+
+            return data;
+        }
+
+        function extractUrl(text) {
+            // Try to find URL in the text
+            const urlMatch = text.match(/(https?:\/\/[^\s]+)/);
+            if (urlMatch) return urlMatch[0];
+            
+            // If no URL found, try to extract username
+            const parts = text.split(':');
+            if (parts.length > 1) {
+                return parts[1].trim();
+            }
+            
+            return text;
+        }
+
+        function generatePortfolio(data) {
+            const portfolioContent = document.getElementById('portfolioContent');
+            
+            // Calculate stats
+            const yearsExp = data.experience.length > 0 ? 
+                Math.max(...data.experience.map(exp => {
+                    const match = exp.date?.match(/(\d{4})/g);
+                    return match ? new Date().getFullYear() - Math.min(...match.map(Number)) : 0;
+                })) : 0;
+            
+            const skillCount = data.skills.reduce((total, category) => total + category.items.length, 0);
+            const projectCount = data.projects.length;
+            const certCount = data.certifications.length;
+
+            const html = `
+                <div class="portfolio-header">
+                    <div class="portfolio-name">${data.name || 'Professional Name'}</div>
+                    <div class="portfolio-title">${data.title || 'Professional Title'}</div>
+                    
+                    <div class="portfolio-contact">
+                        ${data.contact.email ? `<a href="mailto:${data.contact.email}" class="contact-item"><i class="fas fa-envelope"></i> ${data.contact.email}</a>` : ''}
+                        ${data.contact.phone ? `<div class="contact-item"><i class="fas fa-phone"></i> ${data.contact.phone}</div>` : ''}
+                        ${data.contact.linkedin ? `<a href="https://${data.contact.linkedin}" target="_blank" class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ''}
+                        ${data.contact.github ? `<a href="https://${data.contact.github}" target="_blank" class="contact-item"><i class="fab fa-github"></i> GitHub</a>` : ''}
+                        ${data.contact.portfolio ? `<a href="https://${data.contact.portfolio}" target="_blank" class="contact-item"><i class="fas fa-globe"></i> Portfolio</a>` : ''}
+                        ${data.contact.location ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i> ${data.contact.location}</div>` : ''}
+                    </div>
+                </div>
+
+                ${data.summary ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> Professional Summary
+                        </div>
+                        <div class="section-content">
+                            ${data.summary}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number">${yearsExp}+</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${skillCount}</span>
+                        <span class="stat-label">Technical Skills</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${projectCount}</span>
+                        <span class="stat-label">Major Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${certCount}</span>
+                        <span class="stat-label">Certifications</span>
+                    </div>
+                </div>
+
+                ${data.experience.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-briefcase"></i> Professional Experience
+                        </div>
+                        ${data.experience.map(exp => `
+                            <div class="section-content">
+                                <div class="job-title">${exp.title}</div>
+                                <div class="company-date">${exp.company} ${exp.location ? '| ' + exp.location : ''} | ${exp.date}</div>
+                                ${exp.description.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${exp.description.map(desc => `<li style="margin-bottom: 5px;">${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                                ${exp.technologies.length > 0 ? `
+                                    <div style="margin-top: 15px;">
+                                        <strong>Technologies:</strong>
+                                        <div class="skills-grid" style="margin-top: 8px;">
+                                            ${exp.technologies.map(tech => `<div class="skill-tag">${tech}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.skills.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-code"></i> Technical Skills
+                        </div>
+                        ${data.skills.map(skillCategory => `
+                            <div class="section-content">
+                                <div class="job-title">${skillCategory.category}</div>
+                                <div class="skills-grid">
+                                    ${skillCategory.items.map(skill => `<div class="skill-tag">${skill}</div>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.education.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i> Education
+                        </div>
+                        ${data.education.map(edu => `
+                            <div class="section-content">
+                                <div class="job-title">${edu.degree}</div>
+                                <div class="company-date">${edu.school} ${edu.location ? '| ' + edu.location : ''} | ${edu.year}</div>
+                                ${edu.details.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${edu.details.map(detail => `<li style="margin-bottom: 5px;">${detail}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.projects.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-rocket"></i> Key Projects
+                        </div>
+                        ${data.projects.map(project => `
+                            <div class="section-content">
+                                <div class="job-title">${project.name}</div>
+                                <div class="company-date">${project.date}</div>
+                                ${project.description.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${project.description.map(desc => `<li style="margin-bottom: 5px;">${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                                ${project.technologies.length > 0 ? `
+                                    <div style="margin-top: 15px;">
+                                        <strong>Technologies:</strong>
+                                        <div class="skills-grid" style="margin-top: 8px;">
+                                            ${project.technologies.map(tech => `<div class="skill-tag">${tech}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.certifications.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-certificate"></i> Certifications
+                        </div>
+                        <div class="section-content">
+                            <ul style="margin-left: 20px;">
+                                ${data.certifications.map(cert => `<li style="margin-bottom: 8px;">${cert}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${data.languages.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-language"></i> Languages
+                        </div>
+                        <div class="section-content">
+                            <div class="skills-grid">
+                                ${data.languages.map(lang => `<div class="skill-tag">${lang}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${data.awards.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-trophy"></i> Awards & Recognition
+                        </div>
+                        <div class="section-content">
+                            <ul style="margin-left: 20px;">
+                                ${data.awards.map(award => `<li style="margin-bottom: 8px;">${award}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            portfolioContent.innerHTML = html;
+            portfolioContent.classList.add('fade-in');
+            
+            // Apply current theme
+            changeTheme();
+        }
+
+        function changeTheme() {
+            const theme = document.getElementById('themeSelector').value;
+            const content = document.getElementById('portfolioContent');
+            
+            // Remove all theme classes
+            content.className = content.className.replace(/theme-\w+/g, '');
+            
+            // Add selected theme
+            content.classList.add(`theme-${theme}`);
+            currentTheme = theme;
+
+            // Apply theme-specific styles
+            const statsBar = content.querySelector('.stats-bar');
+            const sections = content.querySelectorAll('.section-content');
+            const skillTags = content.querySelectorAll('.skill-tag');
+            const contactItems = content.querySelectorAll('.contact-item');
+
+            if (theme === 'professional') {
+                content.style.background = '#f8f9fa';
+                content.style.color = '#323130';
+                if (statsBar) statsBar.style.background = 'rgba(0,120,212,0.1)';
+                sections.forEach(section => {
+                    section.style.background = 'rgba(0,120,212,0.05)';
+                    section.style.color = '#323130';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = '#0078d4';
+                    tag.style.color = 'white';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = 'rgba(0,120,212,0.1)';
+                    item.style.color = '#323130';
+                });
+            } else if (theme === 'creative') {
+                content.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)';
+                content.style.color = '#323130';
+                if (statsBar) statsBar.style.background = 'rgba(255,255,255,0.2)';
+                sections.forEach(section => {
+                    section.style.background = 'rgba(255,255,255,0.15)';
+                    section.style.color = '#323130';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = 'rgba(255,255,255,0.3)';
+                    tag.style.color = '#323130';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = 'rgba(255,255,255,0.2)';
+                    item.style.color = '#323130';
+                });
+            } else if (theme === 'minimal') {
+                content.style.background = 'white';
+                content.style.color = '#323130';
+                content.style.borderLeft = '5px solid #0078d4';
+                if (statsBar) statsBar.style.background = '#f3f2f1';
+                sections.forEach(section => {
+                    section.style.background = '#f8f9fa';
+                    section.style.color = '#323130';
+                    section.style.border = '1px solid #e5e5e5';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = '#f3f2f1';
+                    tag.style.color = '#323130';
+                    tag.style.border = '1px solid #e5e5e5';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = '#f3f2f1';
+                    item.style.color = '#323130';
+                });
+            } else if (theme === 'dark') {
+                content.style.background = '#1a1a1a';
+                content.style.color = '#f0f0f0';
+                if (statsBar) statsBar.style.background = 'rgba(255,255,255,0.1)';
+                sections.forEach(section => {
+                    section.style.background = 'rgba(255,255,255,0.05)';
+                    section.style.color = '#f0f0f0';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = 'rgba(255,255,255,0.1)';
+                    tag.style.color = '#f0f0f0';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = 'rgba(255,255,255,0.05)';
+                    item.style.color = '#f0f0f0';
+                });
+            } else if (theme === 'material') {
+                content.style.background = 'linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)';
+                content.style.color = 'white';
+                if (statsBar) statsBar.style.background = 'rgba(0,0,0,0.1)';
+                sections.forEach(section => {
+                    section.style.background = 'rgba(255,255,255,0.1)';
+                    section.style.color = 'white';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = 'rgba(255,255,255,0.2)';
+                    tag.style.color = 'white';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = 'rgba(255,255,255,0.1)';
+                    item.style.color = 'white';
+                });
+            } else { // modern theme
+                content.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                content.style.color = 'white';
+                if (statsBar) statsBar.style.background = 'rgba(0,0,0,0.1)';
+                sections.forEach(section => {
+                    section.style.background = 'rgba(255,255,255,0.1)';
+                    section.style.color = 'white';
+                });
+                skillTags.forEach(tag => {
+                    tag.style.background = 'rgba(255,255,255,0.2)';
+                    tag.style.color = 'white';
+                });
+                contactItems.forEach(item => {
+                    item.style.background = 'rgba(255,255,255,0.1)';
+                    item.style.color = 'white';
+                });
+            }
+        }
+
+        function analyzeResume() {
+            if (!parsedData || Object.keys(parsedData).length === 0) {
+                showNotification('Please generate a portfolio first', 'warning');
+                return;
+            }
+            
+            let analysisMessage = "Resume Analysis:\n\n";
+            
+            // Check for key sections
+            if (!parsedData.summary) {
+                analysisMessage += "❌ Missing professional summary\n";
+            }
+            
+            if (parsedData.experience.length === 0) {
+                analysisMessage += "❌ Missing work experience\n";
+            }
+            
+            if (parsedData.education.length === 0) {
+                analysisMessage += "❌ Missing education section\n";
+            }
+            
+            if (parsedData.skills.length === 0) {
+                analysisMessage += "❌ Missing skills section\n";
+            }
+            
+            // Check for contact info
+            if (!parsedData.contact.email) {
+                analysisMessage += "❌ Missing email address\n";
+            }
+            
+            if (!parsedData.contact.phone) {
+                analysisMessage += "❌ Missing phone number\n";
+            }
+            
+            // Check for achievements
+            const hasAchievements = parsedData.experience.some(exp => 
+                exp.description.some(desc => 
+                    desc.match(/(increased|improved|reduced|saved|achieved|developed|led|managed)\s+[^.!?]*(\d+%|\$|\d+)/i)
+                )
+            );
+            
+            if (!hasAchievements) {
+                analysisMessage += "❌ Consider adding more quantifiable achievements\n";
+            }
+            
+            // Check for technologies
+            const techKeywords = ['JavaScript', 'Python', 'Java', 'React', 'Angular', 'Node', 'SQL', 'AWS', 'Azure', 'Docker', 'Kubernetes'];
+            const hasTechKeywords = parsedData.skills.some(skillCategory => 
+                skillCategory.items.some(item => 
+                    techKeywords.some(tech => item.includes(tech))
+                )
+            );
+            
+            if (!hasTechKeywords) {
+                analysisMessage += "❌ Consider adding more specific technical skills\n";
+            }
+            
+            // Positive feedback
+            if (parsedData.experience.length >= 2) {
+                analysisMessage += "✅ Good amount of work experience\n";
+            }
+            
+            if (parsedData.projects.length > 0) {
+                analysisMessage += "✅ Projects section adds value\n";
+            }
+            
+            if (parsedData.certifications.length > 0) {
+                analysisMessage += "✅ Certifications strengthen your profile\n";
+            }
+            
+            alert(analysisMessage);
+        }
+
+        function analyzeResumeContent(data) {
+            // Store analysis for potential use
+            resumeAnalysis = {
+                hasSummary: !!data.summary,
+                experienceCount: data.experience.length,
+                educationCount: data.education.length,
+                skillCount: data.skills.reduce((total, category) => total + category.items.length, 0),
+                projectCount: data.projects.length,
+                certificationCount: data.certifications.length,
+                hasAchievements: data.experience.some(exp => 
+                    exp.description.some(desc => 
+                        desc.match(/(increased|improved|reduced|saved|achieved|developed|led|managed)\s+[^.!?]*(\d+%|\$|\d+)/i)
+                    )
+                )
+            };
+        }
+
+        function exportAsHTML() {
+            if (!parsedData || Object.keys(parsedData).length === 0) {
+                showNotification('Please generate a portfolio first', 'warning');
+                return;
+            }
+            
+            const portfolioHTML = document.getElementById('portfolioContent').outerHTML;
+            const fullHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${parsedData.name ? parsedData.name + ' - Portfolio' : 'Professional Portfolio'}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background: #f5f5f5; }
+        .portfolio-content { padding: 40px; max-width: 1200px; margin: 0 auto; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .portfolio-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #eee; }
+        .portfolio-name { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; color: #323130; }
+        .portfolio-title { font-size: 1.3rem; opacity: 0.9; margin-bottom: 15px; font-weight: 300; color: #605e5c; }
+        .portfolio-contact { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .contact-item { display: flex; align-items: center; gap: 8px; padding: 8px 15px; background: #f3f2f1; border-radius: 20px; font-size: 0.9rem; text-decoration: none; color: #323130; transition: all 0.3s ease; }
+        .contact-item:hover { background: #e1dfdd; transform: translateY(-2px); }
+        .portfolio-section { margin-bottom: 35px; }
+        .section-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee; display: flex; align-items: center; gap: 10px; color: #323130; }
+        .section-content { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 15px; transition: all 0.3s ease; border: 1px solid #e5e5e5; }
+        .section-content:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .job-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 5px; color: #323130; }
+        .company-date { opacity: 0.8; margin-bottom: 10px; font-size: 0.95rem; color: #605e5c; }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+        .skill-tag { background: #0078d4; color: white; padding: 8px 12px; border-radius: 20px; text-align: center; font-size: 0.85rem; font-weight: 500; }
+        .stats-bar { background: #f3f2f1; padding: 20px; margin-top: 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: 700; display: block; color: #0078d4; }
+        .stat-label { font-size: 0.9rem; opacity: 0.8; color: #605e5c; }
+        @media (max-width: 768px) { 
+            .portfolio-content { padding: 20px; } 
+            .portfolio-contact { flex-direction: column; align-items: center; }
+            .portfolio-name { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    ${portfolioHTML}
+</body>
+</html>`;
+
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${parsedData.name?.replace(/\s+/g, '_') || 'portfolio'}_website.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification('HTML exported successfully!', 'success');
+        }
+
+        function exportAsPDF() {
+            if (!parsedData || Object.keys(parsedData).length === 0) {
+                showNotification('Please generate a portfolio first', 'warning');
+                return;
+            }
+            
+            showNotification('Generating PDF...', 'info');
+            
+            const element = document.getElementById('portfolioContent');
+            const opt = {
+                margin: 10,
+                filename: `${parsedData.name?.replace(/\s+/g, '_') || 'portfolio'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                showNotification('PDF exported successfully!', 'success');
+            });
+        }
+
+        function sharePortfolio() {
+            if (!parsedData || Object.keys(parsedData).length === 0) {
+                showNotification('Please generate a portfolio first', 'warning');
+                return;
+            }
+            
+            try {
+                const dataStr = JSON.stringify(parsedData);
+                const compressed = LZString.compressToEncodedURIComponent(dataStr);
+                const shareUrl = `${window.location.origin}${window.location.pathname}?data=${compressed}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: `${parsedData.name || 'Professional'} Portfolio`,
+                        text: 'Check out this professional portfolio!',
+                        url: shareUrl
+                    }).then(() => {
+                        showNotification('Portfolio shared successfully!', 'success');
+                    }).catch(err => {
+                        if (err.name !== 'AbortError') {
+                            copyToClipboard(shareUrl);
+                        }
+                    });
+                } else {
+                    copyToClipboard(shareUrl);
+                }
+            } catch (error) {
+                console.error('Error sharing portfolio:', error);
+                showNotification('Error sharing portfolio', 'error');
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Portfolio link copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Unable to copy link. Please copy manually from address bar.', 'error');
+            });
+        }
+
+        function saveToLocalStorage() {
+            const resumeText = document.getElementById('resumeInput').value.trim();
+            if (!resumeText) {
+                showNotification('No resume content to save', 'warning');
+                return;
+            }
+            
+            localStorage.setItem('savedResume', resumeText);
+            showNotification('Resume saved locally!', 'success');
+        }
+
+        function showNotification(message, type) {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i> 
+                ${message}
+            `;
+            
+            notificationContainer.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    notificationContainer.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        function toggleFullscreen() {
+            const previewPanel = document.getElementById('portfolioPreview');
+            
+            if (!document.fullscreenElement) {
+                if (previewPanel.requestFullscreen) {
+                    previewPanel.requestFullscreen();
+                } else if (previewPanel.webkitRequestFullscreen) {
+                    previewPanel.webkitRequestFullscreen();
+                } else if (previewPanel.msRequestFullscreen) {
+                    previewPanel.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Load shared portfolio on page load
+        window.addEventListener('load', () => {
+            init();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedData = urlParams.get('data');
+            
+            if (sharedData) {
+                try {
+                    const decompressed = LZString.decompressFromEncodedURIComponent(sharedData);
+                    parsedData = JSON.parse(decompressed);
+                    generatePortfolio(parsedData);
+                    showNotification('Portfolio loaded from shared link!', 'success');
+                } catch (error) {
+                    console.error('Error loading shared portfolio:', error);
+                    showNotification('Error loading shared portfolio', 'error');
+                }
+            }
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        parseResume();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        exportAsHTML();
+                        break;
+                    case 'l':
+                        e.preventDefault();
+                        loadSampleResume();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        saveToLocalStorage();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
