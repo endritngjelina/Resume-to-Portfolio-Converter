@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter | Professional Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: 
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%),
+                radial-gradient(circle at 20% 80%, rgba(120, 75, 162, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundShift {
+            0% { transform: translateX(-5px) translateY(-5px); }
+            100% { transform: translateX(5px) translateY(5px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #b3e5fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            border-radius: 2px;
+            animation: underlineGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes underlineGlow {
+            0% { opacity: 0.5; width: 60px; }
+            100% { opacity: 1; width: 120px; }
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 20px;
+            font-weight: 400;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .feature-badges {
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            margin-top: 20px; 
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+        }
+
+        .badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .badge:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .badge:hover::before {
+            left: 100%;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.1),
+                0 0 0 1px rgba(255,255,255,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.03), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 
+                0 35px 70px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+
+        .panel:hover::before {
+            left: 100%;
+        }
+
+        .panel:hover::after {
+            opacity: 1;
+        }
+
+        .panel h2 {
+            color: #2d3748;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .panel h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .panel:hover h2::after {
+            width: 80px;
+        }
+
+        .input-section {
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            text-decoration: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #3b82f6);
+            background-size: 200% 200%;
+            color: white;
+            box-shadow: 
+                0 4px 15px rgba(79, 70, 229, 0.4),
+                0 0 20px rgba(79, 70, 229, 0.1);
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 10px 30px rgba(79, 70, 229, 0.5),
+                0 0 30px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #64748b;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(79, 70, 229, 0.3);
+            color: #4f46e5;
+        }
+
+        .textarea-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #resumeInput {
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            border-radius: 20px;
+            padding: 24px;
+            font-size: 14px;
+            line-height: 1.7;
+            resize: none;
+            outline: none;
+            font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', monospace;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9)),
+                radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.03) 0%, transparent 50%);
+            backdrop-filter: blur(10px);
+            color: #374151;
+        }
+
+        #resumeInput::placeholder {
+            color: #9ca3af;
+            opacity: 0.8;
+        }
+
+        #resumeInput:focus {
+            border-color: #4f46e5;
+            box-shadow: 
+                0 0 0 4px rgba(79, 70, 229, 0.1),
+                0 8px 30px rgba(79, 70, 229, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)),
+                radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
+            transform: scale(1.01);
+        }
+
+        #resumeInput:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .placeholder-text {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #94a3b8;
+            pointer-events: none;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-section {
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 
+                0 4px 12px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .theme-option::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255,255,255,0.6);
+        }
+
+        .theme-option::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4f46e5;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .theme-option.active {
+            border-color: #4f46e5;
+            transform: scale(1.2);
+            box-shadow: 
+                0 6px 20px rgba(79, 70, 229, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .theme-option.active::before {
+            width: 20px;
+            height: 20px;
+        }
+
+        .theme-option.active::after {
+            opacity: 1;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .theme-modern { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-minimal { background: linear-gradient(135deg, #2d3748, #4a5568); }
+        .theme-creative { background: linear-gradient(135deg, #ed64a6, #d53f8c); }
+        .theme-professional { background: linear-gradient(135deg, #3182ce, #2c5282); }
+
+        .preview-frame {
+            width: 100%;
+            height: calc(100% - 50px);
+            border: 2px solid rgba(226, 232, 240, 0.6);
+            border-radius: 20px;
+            background: 
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 100%),
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.02) 0%, transparent 50%);
+            overflow: auto;
+            position: relative;
+            transition: all 0.4s ease;
+            box-shadow: 
+                inset 0 2px 8px rgba(0,0,0,0.05),
+                0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .preview-frame:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+            box-shadow: 
+                inset 0 2px 8px rgba(0,0,0,0.08),
+                0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        /* Custom Scrollbar */
+        .preview-frame::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .preview-frame::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.5);
+            border-radius: 10px;
+        }
+
+        .preview-frame::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .preview-frame::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5b52e8, #8b47eb);
+        }
+
+        .portfolio-preview {
+            padding: 40px;
+            min-height: 100%;
+            background: white;
+            transition: all 0.5s ease;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            animation: slideInDown 0.6s ease-out;
+        }
+
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1a202c, #4a5568);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #718096;
+            font-size: 0.95rem;
+            padding: 12px 20px;
+            background: 
+                linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8)),
+                radial-gradient(circle at 100% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .contact-item:hover {
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9)),
+                radial-gradient(circle at 100% 0%, rgba(79, 70, 229, 0.08) 0%, transparent 50%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .contact-item:hover::before {
+            left: 100%;
+        }
+
+        .contact-item .icon {
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover .icon {
+            color: #4f46e5;
+            transform: scale(1.1);
+        }
+        /*display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #718096;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            background: rgba(241, 245, 249, 0.6);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }*/
+
+        .contact-item:hover {
+            background: rgba(237, 242, 247, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-section:nth-child(1) { animation-delay: 0.1s; }
+        .portfolio-section:nth-child(2) { animation-delay: 0.2s; }
+        .portfolio-section:nth-child(3) { animation-delay: 0.3s; }
+        .portfolio-section:nth-child(4) { animation-delay: 0.4s; }
+        .portfolio-section:nth-child(5) { animation-delay: 0.5s; }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                       linear-gradient(90deg, #4f46e5, #7c3aed, transparent) border-box;
+            border-bottom: 3px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            transition: width 0.8s ease;
+            border-radius: 2px;
+        }
+
+        .portfolio-section:hover .section-title::after {
+            width: 60px;
+        }
+
+        .section-title .icon {
+            padding: 8px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .section-title:hover .icon {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .section-content {
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .skill-category {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4f46e5;
+        }
+
+        .skill-category h4 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .skill-tag {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .experience-item {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 16px;
+            border-left: 4px solid #4f46e5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.05), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .experience-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            border-left-color: #7c3aed;
+        }
+
+        .experience-item:hover::before {
+            left: 100%;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .experience-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .experience-company {
+            color: #4f46e5;
+            font-weight: 500;
+            margin: 2px 0;
+        }
+
+        .experience-date {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .experience-description ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .experience-description li {
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .stats-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .export-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 14px;
+            font-weight: 600;
+            min-width: 160px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .pulse-loader {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #4f46e5;
+            border-radius: 50%;
+            animation: pulse 1.4s ease-in-out infinite both;
+        }
+
+        .pulse-dot:nth-child(1) { animation-delay: -0.32s; }
+        .pulse-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .feature-badges {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .badge {
+                display: inline-block;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+                align-items: center;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .panel {
+                padding: 20px;
+            }
+            
+            .portfolio-preview {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .theme-selector {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+
+        /* Theme Variations */
+        .portfolio-preview.theme-minimal {
+            background: #f8fafc;
+        }
+
+        .portfolio-preview.theme-minimal .portfolio-name {
+            color: #2d3748;
+        }
+
+        .portfolio-preview.theme-minimal .section-title {
+            color: #2d3748;
+            border-bottom-color: #cbd5e0;
+        }
+
+        .portfolio-preview.theme-creative .portfolio-name {
+            background: linear-gradient(135deg, #ed64a6, #d53f8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portfolio-preview.theme-professional .portfolio-name {
+            color: #3182ce;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+            position: relative;
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+        }
+
+        .empty-state .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            opacity: 0.2;
+            color: #4f46e5;
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #374151;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Resume-to-Portfolio Converter</h1>
+            <p>Transform your resume into a stunning professional portfolio in seconds</p>
+            <div class="feature-badges">
+                <span class="badge">✨ AI-Powered Parsing</span>
+                <span class="badge">🎨 Multiple Themes</span>
+                <span class="badge">📱 Responsive Design</span>
+                <span class="badge">⚡ Instant Preview</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="panel input-section">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    Resume Input
+                </h2>
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="loadSampleResume()">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,14.5V19H13V14.5H16L12,10.5L8,14.5H11Z"/>
+                        </svg>
+                        Load Sample
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearInput()">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                        </svg>
+                        Clear
+                    </button>
+                    <button class="btn btn-primary" onclick="parseResume()">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
+                        </svg>
+                        Generate Portfolio
+                    </button>
+                </div>
+                <div class="textarea-container">
+                    <textarea id="resumeInput" placeholder="Paste your resume content here...
+
+Example format:
+JOHN SMITH
+Software Engineer
+john.smith@email.com | (555) 123-4567 | LinkedIn: linkedin.com/in/johnsmith
+
+EXPERIENCE
+Senior Software Engineer | Google | 2020-Present
+• Led development of new search algorithms
+• Improved performance by 40%
+
+Software Engineer | Microsoft | 2018-2020
+• Built cloud infrastructure solutions
+• Managed team of 5 developers
+
+SKILLS
+Programming: Python, JavaScript, Java, C++
+Cloud: AWS, Azure, GCP
+Databases: PostgreSQL, MongoDB
+
+EDUCATION
+BS Computer Science | Stanford University | 2018"></textarea>
+                </div>
+            </div>
+
+            <div class="panel preview-section">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                    </svg>
+                    Live Preview
+                </h2>
+                <div class="preview-controls">
+                    <div class="theme-selector">
+                        <div class="theme-option theme-modern active" data-theme="modern" title="Modern"></div>
+                        <div class="theme-option theme-minimal" data-theme="minimal" title="Minimal"></div>
+                        <div class="theme-option theme-creative" data-theme="creative" title="Creative"></div>
+                        <div class="theme-option theme-professional" data-theme="professional" title="Professional"></div>
+                    </div>
+                    <span style="margin-left: 15px; font-size: 0.9rem; color: #718096;">Theme</span>
+                </div>
+                <div class="preview-frame">
+                    <div id="portfolioPreview" class="portfolio-preview">
+                        <div class="empty-state">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7L13.09,10.26L16.5,11L13.09,11.74L12,15L10.91,11.74L7.5,11L10.91,10.26L12,7M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7L13.09,10.26L16.5,11L13.09,11.74L12,15L10.91,11.74L7.5,11L10.91,10.26L12,7Z"/>
+                            </svg>
+                            <h3>Portfolio Preview</h3>
+                            <p>Enter your resume content to see the magic happen!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel export-section">
+            <h2>
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+                Export Options
+            </h2>
+            <div class="export-buttons">
+                <button class="btn btn-primary btn-large" onclick="exportHTML()">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"/>
+                    </svg>
+                    Export HTML
+                </button>
+                <button class="btn btn-primary btn-large" onclick="copyHTML()">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/>
+                    </svg>
+                    Copy Code
+                </button>
+                <button class="btn btn-secondary btn-large" onclick="printPortfolio()">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/>
+                    </svg>
+                    Print PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'modern';
+        let parsedData = null;
+
+        // Sample resume data
+        const sampleResume = `SARAH JOHNSON
+Senior Full Stack Developer
+sarah.johnson@email.com | (555) 987-6543 | linkedin.com/in/sarahjohnson | github.com/sarahjohnson
+
+PROFESSIONAL SUMMARY
+Experienced full-stack developer with 6+ years of expertise in building scalable web applications. Passionate about clean code, user experience, and emerging technologies. Led multiple cross-functional teams to deliver high-impact products.
+
+EXPERIENCE
+Senior Full Stack Developer | Google | March 2021 - Present
+• Led development of next-generation search interface serving 100M+ users daily
+• Improved application performance by 45% through optimization and caching strategies
+• Mentored 8 junior developers and established coding standards across 3 teams
+• Technologies: React, Node.js, Python, Google Cloud Platform, Kubernetes
+
+Full Stack Developer | Microsoft | June 2019 - February 2021
+• Built and maintained Azure portal components used by enterprise clients
+• Implemented automated testing reducing bug reports by 60%
+• Collaborated with UX team to redesign user workflows increasing satisfaction by 35%
+• Technologies: Angular, C#, .NET Core, Azure, SQL Server
+
+Software Engineer | Startup Inc | August 2018 - May 2019
+• Developed MVP for fintech application from concept to production
+• Integrated payment systems and security protocols achieving PCI compliance
+• Built responsive web application supporting 10,000+ concurrent users
+• Technologies: Vue.js, PHP, MySQL, AWS, Docker
+
+SKILLS
+Frontend: React, Angular, Vue.js, TypeScript, HTML5, CSS3, Tailwind CSS
+Backend: Node.js, Python, C#, PHP, Java, Express.js, Django, .NET Core
+Databases: PostgreSQL, MongoDB, MySQL, Redis, Elasticsearch
+Cloud & DevOps: AWS, Google Cloud, Azure, Docker, Kubernetes, CI/CD
+Tools: Git, Jira, Figma, Jest, Cypress, Webpack
+
+EDUCATION
+Master of Science in Computer Science | MIT | 2018
+Bachelor of Science in Software Engineering | UC Berkeley | 2016
+
+CERTIFICATIONS
+• AWS Certified Solutions Architect Professional (2023)
+• Google Cloud Professional Developer (2022)
+• Certified Kubernetes Administrator (2021)
+
+ACHIEVEMENTS
+• Led team that won "Innovation Award" at Google I/O 2023
+• Speaker at React Conf 2022 and Node.js Interactive 2021
+• Open source contributor with 500+ GitHub stars across projects
+• Mentored 15+ developers through coding bootcamps and internships`;
+
+        // Initialize theme selection
+        document.querySelectorAll('.theme-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                currentTheme = this.dataset.theme;
+                if (parsedData) {
+                    renderPortfolio(parsedData);
+                }
+            });
+        });
+
+        // Real-time parsing
+        document.getElementById('resumeInput').addEventListener('input', function() {
+            const content = this.value.trim();
+            if (content.length > 50) {
+                debounceParseResume();
+            } else if (content.length === 0) {
+                showEmptyState();
+            }
+        });
+
+        let parseTimeout;
+        function debounceParseResume() {
+            clearTimeout(parseTimeout);
+            parseTimeout = setTimeout(parseResume, 1000);
+        }
+
+        function loadSampleResume() {
+            document.getElementById('resumeInput').value = sampleResume;
+            parseResume();
+        }
+
+        function clearInput() {
+            document.getElementById('resumeInput').value = '';
+            showEmptyState();
+        }
+
+        function showEmptyState() {
+            document.getElementById('portfolioPreview').innerHTML = `
+                <div class="empty-state">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7L13.09,10.26L16.5,11L13.09,11.74L12,15L10.91,11.74L7.5,11L10.91,10.26L12,7Z"/>
+                    </svg>
+                    <h3>Portfolio Preview</h3>
+                    <p>Enter your resume content to see the magic happen!</p>
+                </div>
+            `;
+        }
+
+        function parseResume() {
+            const content = document.getElementById('resumeInput').value.trim();
+            if (!content) {
+                showEmptyState();
+                return;
+            }
+
+            showLoading();
+            
+            // Simulate processing delay for better UX
+            setTimeout(() => {
+                try {
+                    parsedData = intelligentParse(content);
+                    renderPortfolio(parsedData);
+                } catch (error) {
+                    console.error('Parsing error:', error);
+                    showError('Failed to parse resume. Please check the format and try again.');
+                }
+            }, 500);
+        }
+
+        function showLoading() {
+            document.getElementById('portfolioPreview').innerHTML = `
+                <div class="loading" style="display: block;">
+                    <div class="spinner"></div>
+                    <h3 style="margin-bottom: 10px;">Processing Resume...</h3>
+                    <p>Our AI is analyzing your content and generating your portfolio</p>
+                    <div class="pulse-loader" style="margin-top: 20px;">
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('portfolioPreview').innerHTML = `
+                <div class="empty-state">
+                    <svg class="icon" viewBox="0 0 24 24" style="color: #e53e3e;">
+                        <path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"/>
+                    </svg>
+                    <h3>Parsing Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function intelligentParse(content) {
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+            const data = {
+                name: '',
+                title: '',
+                contact: {},
+                summary: '',
+                experience: [],
+                skills: {},
+                education: [],
+                certifications: [],
+                achievements: []
+            };
+
+            let currentSection = '';
+            let currentExperience = null;
+            let descriptionLines = [];
+
+            // Enhanced parsing logic
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const upperLine = line.toUpperCase();
+                
+                // Detect name (usually first line or line with all caps)
+                if (i === 0 && !data.name && /^[A-Z\s]+$/.test(line) && line.length > 2) {
+                    data.name = line;
+                    continue;
+                }
+
+                // Detect title (second line, not email/phone)
+                if (i === 1 && !data.title && !line.includes('@') && !line.includes('(')) {
+                    data.title = line;
+                    continue;
+                }
+
+                // Parse contact info
+                if (line.includes('@') || line.includes('linkedin') || line.includes('github') || /\(\d{3}\)/.test(line)) {
+                    const contactParts = line.split('|').map(part => part.trim());
+                    contactParts.forEach(part => {
+                        if (part.includes('@')) {
+                            data.contact.email = part;
+                        } else if (part.includes('linkedin')) {
+                            data.contact.linkedin = part.replace('linkedin.com/in/', '').replace('LinkedIn: ', '');
+                        } else if (part.includes('github')) {
+                            data.contact.github = part.replace('github.com/', '').replace('GitHub: ', '');
+                        } else if (/\(\d{3}\)/.test(part) || /\d{3}[-.\s]\d{3}[-.\s]\d{4}/.test(part)) {
+                            data.contact.phone = part;
+                        }
+                    });
+                    continue;
+                }
+
+                // Detect sections
+                if (['PROFESSIONAL SUMMARY', 'SUMMARY', 'ABOUT', 'PROFILE'].includes(upperLine)) {
+                    currentSection = 'summary';
+                    continue;
+                } else if (['EXPERIENCE', 'WORK EXPERIENCE', 'EMPLOYMENT', 'CAREER HISTORY'].includes(upperLine)) {
+                    currentSection = 'experience';
+                    if (currentExperience) {
+                        if (descriptionLines.length > 0) {
+                            currentExperience.description = descriptionLines.join('\n');
+                        }
+                        data.experience.push(currentExperience);
+                    }
+                    currentExperience = null;
+                    descriptionLines = [];
+                    continue;
+                } else if (['SKILLS', 'TECHNICAL SKILLS', 'CORE COMPETENCIES'].includes(upperLine)) {
+                    currentSection = 'skills';
+                    continue;
+                } else if (['EDUCATION', 'ACADEMIC BACKGROUND'].includes(upperLine)) {
+                    currentSection = 'education';
+                    continue;
+                } else if (['CERTIFICATIONS', 'CERTIFICATES', 'LICENSES'].includes(upperLine)) {
+                    currentSection = 'certifications';
+                    continue;
+                } else if (['ACHIEVEMENTS', 'ACCOMPLISHMENTS', 'AWARDS'].includes(upperLine)) {
+                    currentSection = 'achievements';
+                    continue;
+                }
+
+                // Parse content based on current section
+                switch (currentSection) {
+                    case 'summary':
+                        if (line && !line.match(/^[A-Z\s]+$/)) {
+                            data.summary += (data.summary ? ' ' : '') + line;
+                        }
+                        break;
+
+                    case 'experience':
+                        // Check if this is a new job entry (contains company and date patterns)
+                        if (line.includes('|') && (line.includes('20') || line.includes('Present'))) {
+                            // Save previous experience
+                            if (currentExperience) {
+                                if (descriptionLines.length > 0) {
+                                    currentExperience.description = descriptionLines.join('\n');
+                                }
+                                data.experience.push(currentExperience);
+                            }
+                            
+                            // Parse new experience
+                            const parts = line.split('|').map(p => p.trim());
+                            currentExperience = {
+                                title: parts[0] || '',
+                                company: parts[1] || '',
+                                date: parts[2] || '',
+                                description: ''
+                            };
+                            descriptionLines = [];
+                        } else if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+                            descriptionLines.push(line);
+                        } else if (line && !line.match(/^[A-Z\s]+$/) && currentExperience) {
+                            if (line.includes('Technologies:') || line.includes('Skills:')) {
+                                descriptionLines.push(line);
+                            } else {
+                                descriptionLines.push('• ' + line);
+                            }
+                        }
+                        break;
+
+                    case 'skills':
+                        if (line.includes(':')) {
+                            const [category, skillsList] = line.split(':').map(s => s.trim());
+                            if (skillsList) {
+                                data.skills[category] = skillsList.split(',').map(s => s.trim());
+                            }
+                        } else if (line && !line.match(/^[A-Z\s]+$/)) {
+                            data.skills['Technical Skills'] = (data.skills['Technical Skills'] || []).concat(
+                                line.split(',').map(s => s.trim())
+                            );
+                        }
+                        break;
+
+                    case 'education':
+                        if (line && !line.match(/^[A-Z\s]+$/)) {
+                            data.education.push(line);
+                        }
+                        break;
+
+                    case 'certifications':
+                        if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+                            data.certifications.push(line.substring(1).trim());
+                        } else if (line && !line.match(/^[A-Z\s]+$/)) {
+                            data.certifications.push(line);
+                        }
+                        break;
+
+                    case 'achievements':
+                        if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+                            data.achievements.push(line.substring(1).trim());
+                        } else if (line && !line.match(/^[A-Z\s]+$/)) {
+                            data.achievements.push(line);
+                        }
+                        break;
+                }
+            }
+
+            // Don't forget the last experience
+            if (currentExperience) {
+                if (descriptionLines.length > 0) {
+                    currentExperience.description = descriptionLines.join('\n');
+                }
+                data.experience.push(currentExperience);
+            }
+
+            return data;
+        }
+
+        function renderPortfolio(data) {
+            const preview = document.getElementById('portfolioPreview');
+            preview.className = `portfolio-preview theme-${currentTheme}`;
+            
+            // Calculate stats
+            const stats = {
+                experience: data.experience.length,
+                skills: Object.values(data.skills).flat().length,
+                certifications: data.certifications.length,
+                education: data.education.length
+            };
+
+            preview.innerHTML = `
+                <div class="portfolio-header">
+                    <div class="portfolio-name">${data.name || 'Your Name'}</div>
+                    <div class="portfolio-title">${data.title || 'Your Professional Title'}</div>
+                    <div class="contact-info">
+                        ${data.contact.email ? `<div class="contact-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C2.89,4 2,4.89 20,4Z"/>
+                            </svg>
+                            ${data.contact.email}
+                        </div>` : ''}
+                        ${data.contact.phone ? `<div class="contact-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+                            </svg>
+                            ${data.contact.phone}
+                        </div>` : ''}
+                        ${data.contact.linkedin ? `<div class="contact-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17A1.4 1.4 0 0 1 15.71 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19S5.19 5.95 5.19 6.88A1.69 1.69 0 0 0 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z"/>
+                            </svg>
+                            LinkedIn
+                        </div>` : ''}
+                        ${data.contact.github ? `<div class="contact-item">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z"/>
+                            </svg>
+                            GitHub
+                        </div>` : ''}
+                    </div>
+                </div>
+
+                ${stats.experience + stats.skills + stats.certifications + stats.education > 0 ? `
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        ${stats.experience > 0 ? `<div class="stat-item">
+                            <div class="stat-number">${stats.experience}</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>` : ''}
+                        ${stats.skills > 0 ? `<div class="stat-item">
+                            <div class="stat-number">${stats.skills}</div>
+                            <div class="stat-label">Technical Skills</div>
+                        </div>` : ''}
+                        ${stats.certifications > 0 ? `<div class="stat-item">
+                            <div class="stat-number">${stats.certifications}</div>
+                            <div class="stat-label">Certifications</div>
+                        </div>` : ''}
+                        ${stats.education > 0 ? `<div class="stat-item">
+                            <div class="stat-number">${stats.education}</div>
+                            <div class="stat-label">Education</div>
+                        </div>` : ''}
+                    </div>
+                </div>` : ''}
+
+                ${data.summary ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,6A4,4 0 0,1 16,10A4,4 0 0,1 12,14A4,4 0 0,1 8,10A4,4 0 0,1 12,6Z"/>
+                        </svg>
+                        Professional Summary
+                    </div>
+                    <div class="section-content">
+                        ${data.summary}
+                    </div>
+                </div>` : ''}
+
+                ${data.experience.length > 0 ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M10,2H14A2,2 0 0,1 16,4V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V8A2,2 0 0,1 4,6H8V4A2,2 0 0,1 10,2M14,6V4H10V6H14Z"/>
+                        </svg>
+                        Professional Experience
+                    </div>
+                    <div class="section-content">
+                        ${data.experience.map(exp => `
+                            <div class="experience-item">
+                                <div class="experience-header">
+                                    <div>
+                                        <div class="experience-title">${exp.title}</div>
+                                        <div class="experience-company">${exp.company}</div>
+                                    </div>
+                                    <div class="experience-date">${exp.date}</div>
+                                </div>
+                                ${exp.description ? `
+                                    <div class="experience-description">
+                                        ${exp.description.split('\n').map(line => 
+                                            line.startsWith('•') || line.startsWith('-') || line.startsWith('*') 
+                                                ? `<ul><li>${line.substring(1).trim()}</li></ul>`
+                                                : `<p>${line}</p>`
+                                        ).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                ${Object.keys(data.skills).length > 0 ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7.5A4.5,4.5 0 0,1 16.5,12A4.5,4.5 0 0,1 12,16.5A4.5,4.5 0 0,1 7.5,12A4.5,4.5 0 0,1 12,7.5Z"/>
+                        </svg>
+                        Technical Skills
+                    </div>
+                    <div class="skills-grid">
+                        ${Object.entries(data.skills).map(([category, skills]) => `
+                            <div class="skill-category">
+                                <h4>${category}</h4>
+                                <div class="skill-tags">
+                                    ${skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                ${data.education.length > 0 ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"/>
+                        </svg>
+                        Education
+                    </div>
+                    <div class="section-content">
+                        ${data.education.map(edu => `<p style="margin-bottom: 10px;"><strong>${edu}</strong></p>`).join('')}
+                    </div>
+                </div>` : ''}
+
+                ${data.certifications.length > 0 ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                        </svg>
+                        Certifications
+                    </div>
+                    <div class="section-content">
+                        <ul style="padding-left: 20px;">
+                            ${data.certifications.map(cert => `<li style="margin-bottom: 8px;">${cert}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>` : ''}
+
+                ${data.achievements.length > 0 ? `
+                <div class="portfolio-section">
+                    <div class="section-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M16,8.41L13.41,11L16,13.59L14.59,15L12,12.41L9.41,15L8,13.59L10.59,11L8,8.41L9.41,7L12,9.59L14.59,7L16,8.41M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z"/>
+                        </svg>
+                        Key Achievements
+                    </div>
+                    <div class="section-content">
+                        <ul style="padding-left: 20px;">
+                            ${data.achievements.map(achievement => `<li style="margin-bottom: 8px;">${achievement}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>` : ''}
+            `;
+        }
+
+        function exportHTML() {
+            if (!parsedData) {
+                alert('Please generate a portfolio first');
+                return;
+            }
+
+            const portfolioContent = document.getElementById('portfolioPreview').outerHTML;
+            const fullHTML = generateCompleteHTML(portfolioContent);
+            
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${parsedData.name || 'portfolio'}_portfolio.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyHTML() {
+            if (!parsedData) {
+                alert('Please generate a portfolio first');
+                return;
+            }
+
+            const portfolioContent = document.getElementById('portfolioPreview').outerHTML;
+            const fullHTML = generateCompleteHTML(portfolioContent);
+            
+            navigator.clipboard.writeText(fullHTML).then(() => {
+                const btn = event.target.closest('.btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Copied!';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                btn.style.transform = 'scale(1.05)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    btn.style.transform = '';
+                }, 2500);
+            }).catch(() => {
+                alert('Failed to copy to clipboard. Please try again.');
+            });
+        }
+
+        function printPortfolio() {
+            if (!parsedData) {
+                alert('Please generate a portfolio first');
+                return;
+            }
+
+            const portfolioContent = document.getElementById('portfolioPreview').outerHTML;
+            const printHTML = generateCompleteHTML(portfolioContent, true);
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        function generateCompleteHTML(content, forPrint = false) {
+            return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${parsedData.name || 'Portfolio'} - Professional Portfolio</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6; 
+            color: #2d3748;
+            ${forPrint ? 'background: white !important;' : ''}
+        }
+        ${document.querySelector('style').textContent.replace(/\.portfolio-preview/g, '.portfolio-content')}
+        ${forPrint ? `
+        @media print {
+            body { background: white !important; }
+            .portfolio-content { 
+                background: white !important; 
+                box-shadow: none !important;
+                padding: 20px !important;
+            }
+        }` : ''}
+    </style>
+</head>
+<body>
+    ${content.replace('portfolio-preview', 'portfolio-content')}
+</body>
+</html>`;
+        }
+    </script>
+</body>
+</html>
