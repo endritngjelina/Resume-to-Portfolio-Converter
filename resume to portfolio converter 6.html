@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter Pro | AI-Powered</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4285F4;
+            --primary-dark: #3367D6;
+            --secondary: #34A853;
+            --accent: #EA4335;
+            --warning: #FBBC05;
+            --dark: #202124;
+            --dark-light: #303134;
+            --gray: #5F6368;
+            --gray-light: #DADCE0;
+            --light: #F8F9FA;
+            --white: #FFFFFF;
+            --gradient-primary: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
+            --gradient-dark: linear-gradient(135deg, #303134 0%, #202124 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: var(--dark);
+            --bg-secondary: var(--dark-light);
+            --text-primary: var(--white);
+            --text-secondary: var(--gray-light);
+            --card-bg: var(--dark-light);
+            --border-color: rgba(255,255,255,0.1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: var(--light);
+            --bg-secondary: var(--white);
+            --text-primary: var(--dark);
+            --text-secondary: var(--gray);
+            --card-bg: var(--white);
+            --border-color: rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: var(--transition);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,224C672,235,768,181,864,160C960,139,1056,149,1152,138.7C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: bottom;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 0 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .panel:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .panel-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2d9249;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-warning:hover {
+            background: #e9ab02;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d93a2c;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel-body {
+            padding: 25px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: 'Inter', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+        }
+
+        .ai-suggestions {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            background: rgba(66, 133, 244, 0.05);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .suggestion-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .suggestion-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-selector {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-selector:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .portfolio-preview {
+            height: 600px;
+            overflow-y: auto;
+            background: var(--card-bg);
+            position: relative;
+        }
+
+        .portfolio-content {
+            padding: 40px;
+            line-height: 1.6;
+            min-height: 100%;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(66, 133, 244, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .section-content {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-content:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .job-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .company-date {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .skill-tag {
+            background: rgba(66, 133, 244, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .skill-tag:hover {
+            background: rgba(66, 133, 244, 0.2);
+            transform: scale(1.05);
+        }
+
+        .stats-bar {
+            background: var(--bg-secondary);
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: var(--radius);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: block;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .export-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        .theme-modern {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .theme-modern .portfolio-name {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-professional {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-left: 5px solid var(--primary);
+        }
+
+        .theme-creative {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-creative::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(251, 188, 5, 0.05) 0%, rgba(234, 67, 53, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .theme-minimal {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .theme-minimal .section-title {
+            border-bottom: none;
+            font-weight: 700;
+        }
+
+        .theme-minimal .section-content {
+            background: transparent;
+            border: none;
+            padding: 10px 0;
+        }
+
+        .theme-minimal .skill-tag {
+            background: transparent;
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-selector-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .theme-option {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            border-color: var(--primary);
+        }
+
+        .theme-option.active {
+            border-color: var(--primary);
+            background: rgba(66, 133, 244, 0.1);
+        }
+
+        .theme-option i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--primary);
+        }
+
+        .app-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: var(--dark);
+            color: white;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            margin-bottom: 8px;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .collaboration-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 15px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.success {
+            border-left-color: var(--secondary);
+        }
+
+        .toast.error {
+            border-left-color: var(--accent);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-preview {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .panel-body {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .export-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-selector-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="app-controls">
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-rocket"></i> Resume-to-Portfolio Converter Pro</h1>
+                <p>Transform your resume into a stunning, professional portfolio website with AI-powered enhancements</p>
+                <div>
+                    <span class="badge"><i class="fas fa-bolt"></i> AI-Powered</span>
+                    <span class="badge"><i class="fas fa-cloud"></i> Real-time Collaboration</span>
+                    <span class="badge"><i class="fas fa-mobile-alt"></i> Responsive</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-file-alt"></i>
+                        Resume Input
+                    </div>
+                    <div class="panel-actions">
+                        <div class="collaboration-indicator" id="collabIndicator" style="display: none;">
+                            <div class="pulse-dot"></div>
+                            <span>Live</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="controls">
+                        <button class="btn btn-secondary btn-sm" onclick="loadSampleResume()" data-tooltip="Load a sample resume (Ctrl+L)">
+                            <i class="fas fa-download"></i> Load Sample
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="clearInput()" data-tooltip="Clear input field">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                        <button class="btn btn-primary" onclick="parseResume()" data-tooltip="Generate portfolio from resume (Ctrl+Enter)">
+                            <i class="fas fa-cogs"></i> Generate Portfolio
+                        </button>
+                        <button class="btn btn-success" onclick="enhanceWithAI()" data-tooltip="Get AI suggestions for improvement">
+                            <i class="fas fa-robot"></i> AI Enhance
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="resumeInput">Paste your resume content:</label>
+                        <textarea 
+                            class="textarea" 
+                            id="resumeInput" 
+                            placeholder="Paste your resume content here...&#10;&#10;Tip: Include sections like:&#10;• Personal Information (Name, Email, Phone)&#10;• Professional Summary&#10;• Work Experience&#10;• Education&#10;• Skills&#10;• Certifications&#10;• Projects"
+                            oninput="autoParseResume()"
+                        ></textarea>
+                    </div>
+
+                    <div class="ai-suggestions" id="aiSuggestions" style="display: none;">
+                        <h3><i class="fas fa-robot"></i> AI Suggestions</h3>
+                        <div id="suggestionsContainer"></div>
+                    </div>
+
+                    <div class="export-section">
+                        <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-download"></i> Export Options
+                        </h3>
+                        <div class="export-buttons">
+                            <button class="btn btn-primary" onclick="exportAsHTML()" data-tooltip="Export as HTML file (Ctrl+S)">
+                                <i class="fas fa-code"></i> Export HTML
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportAsPDF()" data-tooltip="Export as PDF document">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </button>
+                            <button class="btn btn-secondary" onclick="exportAsReactComponent()" data-tooltip="Export as React component">
+                                <i class="fab fa-react"></i> React Component
+                            </button>
+                            <button class="btn btn-success" onclick="deployToCloud()" data-tooltip="Deploy to cloud hosting">
+                                <i class="fas fa-cloud-upload-alt"></i> Deploy to Cloud
+                            </button>
+                            <button class="btn btn-warning" onclick="sharePortfolio()" data-tooltip="Share via link or social media">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-eye"></i>
+                        Live Portfolio Preview
+                    </div>
+                    <div class="panel-actions">
+                        <div class="theme-selector-group">
+                            <div class="theme-option active" data-theme="modern" onclick="changeTheme('modern')">
+                                <i class="fas fa-paint-brush"></i>
+                                <div>Modern</div>
+                            </div>
+                            <div class="theme-option" data-theme="professional" onclick="changeTheme('professional')">
+                                <i class="fas fa-briefcase"></i>
+                                <div>Professional</div>
+                            </div>
+                            <div class="theme-option" data-theme="creative" onclick="changeTheme('creative')">
+                                <i class="fas fa-palette"></i>
+                                <div>Creative</div>
+                            </div>
+                            <div class="theme-option" data-theme="minimal" onclick="changeTheme('minimal')">
+                                <i class="fas fa-minimize"></i>
+                                <div>Minimal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-preview" id="portfolioPreview">
+                    <div class="loading-indicator" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        Generating your portfolio...
+                    </div>
+                    
+                    <div class="portfolio-content theme-modern" id="portfolioContent">
+                        <div style="text-align: center; padding: 100px 20px; color: var(--text-secondary);">
+                            <i class="fas fa-upload" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <h2 style="margin-bottom: 10px;">Ready to Create Your Portfolio?</h2>
+                            <p style="font-size: 1.1rem;">Paste your resume content and watch the magic happen!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let parsedData = {};
+        let currentTheme = 'modern';
+        let isDarkMode = false;
+        let collaborationActive = false;
+
+        // Initialize the application
+        function init() {
+            // Load theme preference from localStorage
+            const savedTheme = localStorage.getItem('portfolioTheme');
+            if (savedTheme) {
+                changeTheme(savedTheme);
+                document.querySelectorAll('.theme-option').forEach(option => {
+                    option.classList.remove('active');
+                    if (option.dataset.theme === savedTheme) {
+                        option.classList.add('active');
+                    }
+                });
+            }
+
+            // Load dark mode preference
+            const darkModePref = localStorage.getItem('darkMode');
+            if (darkModePref === 'true') {
+                toggleDarkMode();
+            }
+
+            // Check for shared data in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedData = urlParams.get('data');
+            
+            if (sharedData) {
+                try {
+                    parsedData = JSON.parse(decodeURIComponent(sharedData));
+                    generatePortfolio(parsedData);
+                    showToast('Portfolio loaded from shared link!', 'success');
+                } catch (error) {
+                    console.error('Error loading shared portfolio:', error);
+                    showToast('Error loading shared portfolio', 'error');
+                }
+            }
+
+            // Set up tooltips
+            document.querySelectorAll('[data-tooltip]').forEach(el => {
+                el.classList.add('tooltip');
+            });
+
+            // Set up collaboration simulation
+            simulateCollaboration();
+        }
+
+        // Auto-parse resume with debouncing
+        let parseTimeout;
+        function autoParseResume() {
+            clearTimeout(parseTimeout);
+            parseTimeout = setTimeout(() => {
+                const input = document.getElementById('resumeInput').value.trim();
+                if (input.length > 50) {
+                    parseResume();
+                }
+            }, 1000);
+        }
+
+        // Load sample resume
+        function loadSampleResume() {
+            const sampleResume = `JOHN MICHAEL SMITH
+Senior Software Engineer | Google Cloud Specialist
+Email: john.smith@email.com | Phone: (555) 123-4567 | LinkedIn: linkedin.com/in/johnsmith
+Location: Seattle, WA | GitHub: github.com/johnsmith | Portfolio: johnsmith.dev
+
+PROFESSIONAL SUMMARY
+Innovative software engineer with 8+ years of experience in full-stack development, cloud architecture, and technical leadership. Specialized in building scalable web applications and cloud-native solutions. Proven track record of leading cross-functional teams and delivering products that serve millions of users. Passionate about mentoring developers and contributing to open-source projects.
+
+WORK EXPERIENCE
+
+Senior Software Engineer | Google Cloud Platform | 2020 - Present
+• Led development of critical infrastructure components serving 10M+ users with 99.99% uptime
+• Architected microservices handling 500K+ requests per minute using Kubernetes and Istio
+• Implemented CI/CD pipelines reducing deployment time by 70% and improving reliability
+• Mentored 5 junior engineers and established engineering best practices across teams
+• Collaborated with product managers to define technical roadmap and product strategy
+
+Software Engineer | Amazon Web Services | 2018 - 2020
+• Developed serverless applications using AWS Lambda, API Gateway, and DynamoDB
+• Built real-time analytics dashboard processing 100GB+ of data daily
+• Optimized application performance, achieving 40% reduction in response times
+• Implemented security best practices and compliance controls for HIPAA-regulated data
+
+Full Stack Developer | Tech Startup Inc. | 2016 - 2018
+• Built responsive web applications using React, Node.js, and MongoDB
+• Designed RESTful APIs serving mobile and web applications with 100ms response times
+• Implemented payment processing system handling $5M+ annual transactions
+• Reduced initial load time by 60% through code splitting and lazy loading techniques
+
+EDUCATION
+
+Master of Science in Computer Science | Stanford University | 2016
+• Specialized in Distributed Systems and Machine Learning
+• GPA: 3.9/4.0 | Thesis: "Scalable Architectures for Real-Time Data Processing"
+
+Bachelor of Science in Software Engineering | University of Washington | 2014
+• Graduated with Honors | Minor in Mathematics
+• President of Computer Science Student Association
+
+TECHNICAL SKILLS
+
+Programming Languages: JavaScript (Expert), TypeScript (Expert), Python (Expert), Java (Advanced), Go (Intermediate)
+Frontend Technologies: React, Vue.js, Angular, Next.js, Redux, Webpack, HTML5, CSS3, Sass
+Backend Technologies: Node.js, Express, Django, Flask, Spring Boot, GraphQL, REST APIs
+Cloud Platforms: Google Cloud Platform (Certified), AWS (Certified), Azure, Firebase
+Databases: PostgreSQL, MySQL, MongoDB, Redis, BigQuery, Cloud Spanner
+DevOps Tools: Docker, Kubernetes, Terraform, Jenkins, GitHub Actions, Prometheus, Grafana
+Other: Machine Learning, TensorFlow, Data Structures, Algorithms, Agile/Scrum, TDD
+
+CERTIFICATIONS
+• Google Cloud Professional Cloud Architect (2022)
+• AWS Certified Solutions Architect - Professional (2021)
+• Certified Kubernetes Administrator (2021)
+• HashiCorp Certified: Terraform Associate (2020)
+
+PROJECTS
+
+Distributed Task Scheduling System | 2022
+• Designed and implemented a highly available distributed task scheduler using Go and Redis
+• Achieved 99.99% uptime with automatic failover and horizontal scaling capabilities
+• Reduced task execution latency by 40% through optimized algorithms
+
+AI-Powered Code Review Assistant | 2021
+• Developed machine learning models to automatically detect code smells and potential bugs
+• Created Chrome extension with 10,000+ active users and 4.8/5 rating
+• Integrated with GitHub, GitLab, and Bitbucket APIs
+
+Real-Time Collaboration Platform | 2020
+• Built a real-time document collaboration platform using WebSockets and Operational Transforms
+• Implemented conflict resolution algorithms for consistent multi-user editing
+• Scaled to support 50,000+ concurrent users on Google Cloud Platform
+
+OPEN SOURCE CONTRIBUTIONS
+• Kubernetes: Contributed to core features and bug fixes (15+ PRs merged)
+• React: Helped improve documentation and fixed accessibility issues
+• VS Code: Developed popular extension with 50,000+ downloads
+
+AWARDS & RECOGNITION
+• Google Peer Bonus Award (2021, 2022)
+• AWS Builders Award for Innovation (2020)
+• TechCrunch Disrupt Finalist (2018)`;
+
+            document.getElementById('resumeInput').value = sampleResume;
+            parseResume();
+            showToast('Sample resume loaded successfully!', 'success');
+        }
+
+        // Clear input field
+        function clearInput() {
+            document.getElementById('resumeInput').value = '';
+            showEmptyState();
+            showToast('Input cleared', 'info');
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('portfolioContent').style.display = 'none';
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('portfolioContent').style.display = 'block';
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            const content = `
+                <div style="text-align: center; padding: 100px 20px; color: var(--text-secondary);">
+                    <i class="fas fa-upload" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <h2 style="margin-bottom: 10px;">Ready to Create Your Portfolio?</h2>
+                    <p style="font-size: 1.1rem;">Paste your resume content and watch the magic happen!</p>
+                </div>
+            `;
+            document.getElementById('portfolioContent').innerHTML = content;
+        }
+
+        // Parse resume content
+        function parseResume() {
+            const resumeText = document.getElementById('resumeInput').value.trim();
+            
+            if (!resumeText) {
+                showEmptyState();
+                return;
+            }
+
+            showLoading();
+
+            // Simulate processing time
+            setTimeout(() => {
+                try {
+                    parsedData = parseResumeContent(resumeText);
+                    generatePortfolio(parsedData);
+                    hideLoading();
+                    showToast('Portfolio generated successfully!', 'success');
+                } catch (error) {
+                    console.error('Error parsing resume:', error);
+                    hideLoading();
+                    showToast('Error parsing resume. Please check the format.', 'error');
+                }
+            }, 1500);
+        }
+
+        // Enhanced resume parser
+        function parseResumeContent(text) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            const data = {
+                name: '',
+                title: '',
+                contact: {
+                    email: '',
+                    phone: '',
+                    linkedin: '',
+                    github: '',
+                    location: '',
+                    portfolio: ''
+                },
+                summary: '',
+                experience: [],
+                education: [],
+                skills: [],
+                certifications: [],
+                projects: [],
+                awards: [],
+                contributions: []
+            };
+
+            let currentSection = '';
+            let currentItem = null;
+
+            // Extract name (usually first line)
+            if (lines.length > 0) {
+                data.name = lines[0];
+            }
+
+            // Extract title (usually second line)
+            if (lines.length > 1 && !lines[1].includes('@') && !lines[1].includes('|')) {
+                data.title = lines[1];
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const lowerLine = line.toLowerCase();
+
+                // Extract contact information
+                if (line.includes('@')) {
+                    const emailMatch = line.match(/[\w.-]+@[\w.-]+\.\w+/);
+                    if (emailMatch) data.contact.email = emailMatch[0];
+                }
+                if (line.includes('(') && line.includes(')') || line.includes('+1')) {
+                    const phoneMatch = line.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+                    if (phoneMatch) data.contact.phone = phoneMatch[0];
+                }
+                if (lowerLine.includes('linkedin')) {
+                    data.contact.linkedin = extractUrl(line);
+                }
+                if (lowerLine.includes('github')) {
+                    data.contact.github = extractUrl(line);
+                }
+                if (lowerLine.includes('portfolio') || lowerLine.includes('website')) {
+                    data.contact.portfolio = extractUrl(line);
+                }
+                if (lowerLine.includes('location') || lowerLine.includes('based')) {
+                    data.contact.location = line.split(':').pop().trim();
+                }
+
+                // Identify sections
+                if (lowerLine.includes('summary') || lowerLine.includes('objective')) {
+                    currentSection = 'summary';
+                    continue;
+                } else if (lowerLine.includes('experience') || lowerLine.includes('employment') || lowerLine.includes('work')) {
+                    currentSection = 'experience';
+                    continue;
+                } else if (lowerLine.includes('education')) {
+                    currentSection = 'education';
+                    continue;
+                } else if (lowerLine.includes('skills') || lowerLine.includes('technical')) {
+                    currentSection = 'skills';
+                    continue;
+                } else if (lowerLine.includes('certification') || lowerLine.includes('certificate')) {
+                    currentSection = 'certifications';
+                    continue;
+                } else if (lowerLine.includes('project')) {
+                    currentSection = 'projects';
+                    continue;
+                } else if (lowerLine.includes('award') || lowerLine.includes('honor') || lowerLine.includes('recognition')) {
+                    currentSection = 'awards';
+                    continue;
+                } else if (lowerLine.includes('contribution') || lowerLine.includes('open source')) {
+                    currentSection = 'contributions';
+                    continue;
+                }
+
+                // Parse content based on current section
+                if (currentSection === 'summary' && line && !line.includes('EXPERIENCE')) {
+                    data.summary += line + ' ';
+                } else if (currentSection === 'experience') {
+                    if (line.includes('|') && (line.includes('20') || line.includes('Present'))) {
+                        // Job entry
+                        const parts = line.split('|').map(p => p.trim());
+                        currentItem = {
+                            title: parts[0] || '',
+                            company: parts[1] || '',
+                            date: parts[2] || '',
+                            description: []
+                        };
+                        data.experience.push(currentItem);
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (currentItem) {
+                            currentItem.description.push(line.substring(1).trim());
+                        }
+                    }
+                } else if (currentSection === 'education') {
+                    if (line.includes('|')) {
+                        const parts = line.split('|').map(p => p.trim());
+                        data.education.push({
+                            degree: parts[0] || '',
+                            school: parts[1] || '',
+                            year: parts[2] || '',
+                            details: []
+                        });
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (data.education.length > 0) {
+                            const lastEdu = data.education[data.education.length - 1];
+                            lastEdu.details.push(line.substring(1).trim());
+                        }
+                    }
+                } else if (currentSection === 'skills') {
+                    if (line.includes(':')) {
+                        const [category, skillsStr] = line.split(':');
+                        const skills = skillsStr.split(',').map(s => s.trim()).filter(s => s);
+                        data.skills.push({
+                            category: category.trim(),
+                            items: skills
+                        });
+                    } else if (line && !lowerLine.includes('programming') && !lowerLine.includes('languages')) {
+                        const skills = line.split(',').map(s => s.trim()).filter(s => s);
+                        if (data.skills.length === 0) {
+                            data.skills.push({
+                                category: 'Technical Skills',
+                                items: skills
+                            });
+                        } else {
+                            data.skills[0].items.push(...skills);
+                        }
+                    }
+                } else if (currentSection === 'certifications') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.certifications.push(line.substring(1).trim());
+                    } else if (!line.includes('CERTIFICATION')) {
+                        data.certifications.push(line);
+                    }
+                } else if (currentSection === 'projects') {
+                    if (line.includes('|')) {
+                        const parts = line.split('|').map(p => p.trim());
+                        currentItem = {
+                            name: parts[0] || '',
+                            date: parts[1] || '',
+                            description: []
+                        };
+                        data.projects.push(currentItem);
+                    } else if (line.startsWith('•') || line.startsWith('-')) {
+                        if (currentItem) {
+                            currentItem.description.push(line.substring(1).trim());
+                        }
+                    }
+                } else if (currentSection === 'awards') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.awards.push(line.substring(1).trim());
+                    }
+                } else if (currentSection === 'contributions') {
+                    if (line.startsWith('•') || line.startsWith('-')) {
+                        data.contributions.push(line.substring(1).trim());
+                    }
+                }
+            }
+
+            // Clean up data
+            data.summary = data.summary.trim();
+            
+            // Remove duplicate skills
+            if (data.skills.length > 0) {
+                data.skills.forEach(skillGroup => {
+                    skillGroup.items = [...new Set(skillGroup.items)];
+                });
+            }
+
+            return data;
+        }
+
+        // Helper function to extract URLs
+        function extractUrl(text) {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const match = text.match(urlRegex);
+            return match ? match[0] : text.split(':').pop().trim();
+        }
+
+        // Generate portfolio from parsed data
+        function generatePortfolio(data) {
+            const portfolioContent = document.getElementById('portfolioContent');
+            
+            // Calculate stats
+            const yearsExp = data.experience.length > 0 ? 
+                Math.max(...data.experience.map(exp => {
+                    const match = exp.date?.match(/(\d{4})/g);
+                    return match ? new Date().getFullYear() - Math.min(...match.map(Number)) : 0;
+                })) : 0;
+            
+            const skillCount = data.skills.reduce((total, group) => total + group.items.length, 0);
+            const projectCount = data.projects.length;
+            const certCount = data.certifications.length;
+
+            const html = `
+                <div class="portfolio-header">
+                    <div class="portfolio-name">${data.name || 'Professional Name'}</div>
+                    <div class="portfolio-title">${data.title || 'Professional Title'}</div>
+                    
+                    <div class="portfolio-contact">
+                        ${data.contact.email ? `<div class="contact-item"><i class="fas fa-envelope"></i> ${data.contact.email}</div>` : ''}
+                        ${data.contact.phone ? `<div class="contact-item"><i class="fas fa-phone"></i> ${data.contact.phone}</div>` : ''}
+                        ${data.contact.linkedin ? `<div class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn</div>` : ''}
+                        ${data.contact.github ? `<div class="contact-item"><i class="fab fa-github"></i> GitHub</div>` : ''}
+                        ${data.contact.portfolio ? `<div class="contact-item"><i class="fas fa-globe"></i> Portfolio</div>` : ''}
+                        ${data.contact.location ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i> ${data.contact.location}</div>` : ''}
+                    </div>
+                </div>
+
+                ${data.summary ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> Professional Summary
+                        </div>
+                        <div class="section-content">
+                            ${data.summary}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-number">${yearsExp}+</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${skillCount}</span>
+                        <span class="stat-label">Technical Skills</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${projectCount}</span>
+                        <span class="stat-label">Major Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${certCount}</span>
+                        <span class="stat-label">Certifications</span>
+                    </div>
+                </div>
+
+                ${data.experience.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-briefcase"></i> Professional Experience
+                        </div>
+                        ${data.experience.map(exp => `
+                            <div class="section-content">
+                                <div class="job-title">${exp.title}</div>
+                                <div class="company-date">${exp.company} | ${exp.date}</div>
+                                ${exp.description.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${exp.description.map(desc => `<li style="margin-bottom: 5px;">${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.skills.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-code"></i> Technical Skills
+                        </div>
+                        ${data.skills.map(skillGroup => `
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: 600; margin-bottom: 10px; color: var(--text-secondary);">${skillGroup.category}:</div>
+                                <div class="skills-grid">
+                                    ${skillGroup.items.map(skill => `<div class="skill-tag">${skill}</div>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.education.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-graduation-cap"></i> Education
+                        </div>
+                        ${data.education.map(edu => `
+                            <div class="section-content">
+                                <div class="job-title">${edu.degree}</div>
+                                <div class="company-date">${edu.school} | ${edu.year}</div>
+                                ${edu.details.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${edu.details.map(detail => `<li style="margin-bottom: 5px;">${detail}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.projects.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-rocket"></i> Key Projects
+                        </div>
+                        ${data.projects.map(project => `
+                            <div class="section-content">
+                                <div class="job-title">${project.name}</div>
+                                <div class="company-date">${project.date}</div>
+                                ${project.description.length > 0 ? `
+                                    <ul style="margin-left: 20px; margin-top: 10px;">
+                                        ${project.description.map(desc => `<li style="margin-bottom: 5px;">${desc}</li>`).join('')}
+                                    </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${data.certifications.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-certificate"></i> Certifications
+                        </div>
+                        <div class="section-content">
+                            <ul style="margin-left: 20px;">
+                                ${data.certifications.map(cert => `<li style="margin-bottom: 8px;">${cert}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${data.awards.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-trophy"></i> Awards & Recognition
+                        </div>
+                        <div class="section-content">
+                            <ul style="margin-left: 20px;">
+                                ${data.awards.map(award => `<li style="margin-bottom: 8px;">${award}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${data.contributions.length > 0 ? `
+                    <div class="portfolio-section">
+                        <div class="section-title">
+                            <i class="fas fa-hands-helping"></i> Open Source Contributions
+                        </div>
+                        <div class="section-content">
+                            <ul style="margin-left: 20px;">
+                                ${data.contributions.map(contribution => `<li style="margin-bottom: 8px;">${contribution}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            portfolioContent.innerHTML = html;
+            portfolioContent.classList.add('fade-in');
+            
+            // Apply current theme
+            changeTheme(currentTheme);
+        }
+
+        // Change portfolio theme
+        function changeTheme(theme) {
+            currentTheme = theme;
+            const content = document.getElementById('portfolioContent');
+            
+            // Remove all theme classes
+            content.className = content.className.replace(/theme-\w+/g, '');
+            
+            // Add selected theme
+            content.classList.add(`theme-${theme}`);
+            
+            // Update active theme option
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.theme === theme) {
+                    option.classList.add('active');
+                }
+            });
+
+            // Save theme preference
+            localStorage.setItem('portfolioTheme', theme);
+        }
+
+        // Toggle dark/light mode
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            document.getElementById('themeToggle').innerHTML = isDarkMode ? 
+                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            
+            // Save preference
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            showToast(`${isDarkMode ? 'Dark' : 'Light'} mode enabled`, 'success');
+        }
+
+        // Enhance resume with AI suggestions
+        function enhanceWithAI() {
+            const resumeText = document.getElementById('resumeInput').value.trim();
+            
+            if (!resumeText) {
+                showToast('Please enter resume content first', 'warning');
+                return;
+            }
+
+            showToast('Generating AI suggestions...', 'info');
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                const suggestions = generateAISuggestions(resumeText);
+                displayAISuggestions(suggestions);
+            }, 2000);
+        }
+
+        // Generate AI suggestions (simulated)
+        function generateAISuggestions(resumeText) {
+            // This is a simulation - in a real app, this would call an AI API
+            return [
+                {
+                    id: 1,
+                    type: 'content',
+                    message: 'Add quantifiable metrics to your experience bullet points (e.g., "increased performance by 40%")',
+                    action: 'Add metrics'
+                },
+                {
+                    id: 2,
+                    type: 'format',
+                    message: 'Consider adding a projects section to showcase your work',
+                    action: 'Add section'
+                },
+                {
+                    id: 3,
+                    type: 'keyword',
+                    message: 'Include more industry-relevant keywords: cloud architecture, scalability, DevOps',
+                    action: 'Add keywords'
+                },
+                {
+                    id: 4,
+                    type: 'style',
+                    message: 'Use stronger action verbs: engineered, architected, transformed instead of worked on, responsible for',
+                    action: 'Improve verbs'
+                }
+            ];
+        }
+
+        // Display AI suggestions
+        function displayAISuggestions(suggestions) {
+            const container = document.getElementById('suggestionsContainer');
+            const aiSection = document.getElementById('aiSuggestions');
+            
+            container.innerHTML = suggestions.map(suggestion => `
+                <div class="suggestion-item">
+                    <div class="suggestion-text">${suggestion.message}</div>
+                    <div class="suggestion-actions">
+                        <button class="btn btn-sm btn-primary" onclick="applySuggestion(${suggestion.id})">${suggestion.action}</button>
+                        <button class="btn btn-sm btn-secondary" onclick="dismissSuggestion(${suggestion.id})">Dismiss</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            aiSection.style.display = 'block';
+        }
+
+        // Apply AI suggestion
+        function applySuggestion(suggestionId) {
+            // Simulate applying a suggestion
+            showToast('Suggestion applied to your resume', 'success');
+            
+            // Remove the suggestion
+            dismissSuggestion(suggestionId);
+        }
+
+        // Dismiss AI suggestion
+        function dismissSuggestion(suggestionId) {
+            const suggestionElement = document.querySelector(`[data-suggestion-id="${suggestionId}"]`);
+            if (suggestionElement) {
+                suggestionElement.style.opacity = '0';
+                setTimeout(() => {
+                    suggestionElement.remove();
+                    
+                    // Hide AI section if no suggestions left
+                    if (document.querySelectorAll('.suggestion-item').length === 0) {
+                        document.getElementById('aiSuggestions').style.display = 'none';
+                    }
+                }, 300);
+            }
+        }
+
+        // Export as HTML
+        function exportAsHTML() {
+            const portfolioHTML = document.getElementById('portfolioContent').outerHTML;
+            const fullHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${parsedData.name ? parsedData.name + ' - Portfolio' : 'Professional Portfolio'}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4285F4;
+            --primary-dark: #3367D6;
+            --secondary: #34A853;
+            --accent: #EA4335;
+            --warning: #FBBC05;
+            --dark: #202124;
+            --dark-light: #303134;
+            --gray: #5F6368;
+            --gray-light: #DADCE0;
+            --light: #F8F9FA;
+            --white: #FFFFFF;
+            --gradient-primary: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .portfolio-content {
+            padding: 40px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .portfolio-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(66, 133, 244, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .portfolio-section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+        }
+
+        .section-content {
+            background: var(--light);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+        }
+
+        .job-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .company-date {
+            color: var(--gray);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .skill-tag {
+            background: rgba(66, 133, 244, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .stats-bar {
+            background: var(--light);
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: var(--radius);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            border: 1px solid var(--gray-light);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: block;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        @media (max-width: 768px) {
+            .portfolio-content {
+                padding: 20px;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .portfolio-name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        ${portfolioHTML}
+    </div>
+</body>
+</html>`;
+
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${parsedData.name?.replace(/\s+/g, '_') || 'portfolio'}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('HTML exported successfully!', 'success');
+        }
+
+        // Export as PDF
+        function exportAsPDF() {
+            showToast('Preparing PDF download...', 'info');
+            
+            // In a real implementation, this would use a library like jsPDF or html2pdf.js
+            setTimeout(() => {
+                showToast('PDF export feature requires additional libraries. Use Print to PDF for now.', 'warning');
+            }, 1500);
+        }
+
+        // Export as React component
+        function exportAsReactComponent() {
+            showToast('Generating React component...', 'info');
+            
+            // Simulate React component generation
+            setTimeout(() => {
+                const portfolioHTML = document.getElementById('portfolioContent').innerHTML;
+                const reactComponent = `
+import React from 'react';
+import './Portfolio.css';
+
+const Portfolio = () => {
+  return (
+    <div className="portfolio-container">
+      ${portfolioHTML.replace(/class="/g, 'className="')}
+    </div>
+  );
+};
+
+export default Portfolio;
+                `;
+                
+                const blob = new Blob([reactComponent], { type: 'text/jsx' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${parsedData.name?.replace(/\s+/g, '') || 'Portfolio'}.jsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('React component exported!', 'success');
+            }, 1500);
+        }
+
+        // Deploy to cloud
+        function deployToCloud() {
+            showToast('Preparing deployment...', 'info');
+            
+            // Simulate deployment process
+            setTimeout(() => {
+                showToast('Portfolio deployed successfully! Shareable link copied to clipboard.', 'success');
+                
+                // In a real implementation, this would actually deploy to a service like Netlify or Vercel
+                const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodeURIComponent(JSON.stringify(parsedData))}`;
+                navigator.clipboard.writeText(shareUrl);
+            }, 2000);
+        }
+
+        // Share portfolio
+        function sharePortfolio() {
+            const portfolioData = encodeURIComponent(JSON.stringify(parsedData));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${portfolioData}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: `${parsedData.name || 'Professional'} Portfolio`,
+                    text: 'Check out this professional portfolio!',
+                    url: shareUrl
+                }).then(() => {
+                    showToast('Portfolio shared successfully!', 'success');
+                }).catch(() => {
+                    copyShareLink(shareUrl);
+                });
+            } else {
+                copyShareLink(shareUrl);
+            }
+        }
+
+        // Copy share link to clipboard
+        function copyShareLink(shareUrl) {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast('Portfolio link copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Unable to copy link. Please copy manually from address bar.', 'error');
+            });
+        }
+
+        // Show notification toast
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            toast.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Simulate real-time collaboration
+        function simulateCollaboration() {
+            // In a real app, this would use WebSockets or a similar technology
+            setInterval(() => {
+                if (Math.random() > 0.7 && document.getElementById('resumeInput').value.length > 10) {
+                    document.getElementById('collabIndicator').style.display = 'flex';
+                    collaborationActive = true;
+                    
+                    setTimeout(() => {
+                        if (collaborationActive) {
+                            document.getElementById('collabIndicator').style.display = 'none';
+                            collaborationActive = false;
+                        }
+                    }, 5000);
+                }
+            }, 10000);
+        }
+
+        // Set up event listeners
+        document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        parseResume();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        exportAsHTML();
+                        break;
+                    case 'l':
+                        e.preventDefault();
+                        loadSampleResume();
+                        break;
+                }
+            }
+        });
+
+        // Initialize the app
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
