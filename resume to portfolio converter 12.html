@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-to-Portfolio Converter | Professional Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --text-color: #333;
+            --light-text: #666;
+            --background: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --success: #4CAF50;
+            --error: #f44336;
+            --warning: #ff9800;
+            --info: #2196F3;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 
+                        0 1px 0 rgba(255, 255, 255, 0.6) inset;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 
+                        0 1px 0 rgba(255, 255, 255, 0.6) inset;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 400% 100%;
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5em;
+        }
+
+        /* Animations */
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 400% 0; }
+            50% { background-position: -400% 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-40px) translateX(20px) rotate(90deg) scale(1.1); }
+            50% { transform: translateY(-80px) translateX(-20px) rotate(180deg) scale(0.9); }
+            75% { transform: translateY(-40px) translateX(-40px) rotate(270deg) scale(1.05); }
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-size: 200% 200%;
+            animation: gradientText 6s ease infinite, textGlow 3s ease-in-out infinite alternate;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--light-text);
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95em;
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 2px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* Portfolio Preview */
+        .portfolio-preview {
+            height: 100%;
+            border: none;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .preview-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .preview-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Portfolio Content Styles */
+        .portfolio-content {
+            padding: 40px;
+            height: calc(100% - 71px);
+            overflow-y: auto;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .portfolio-name {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .portfolio-title {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .portfolio-contact {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .portfolio-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .portfolio-text {
+            color: #555;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .experience-item, .education-item, .project-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        .experience-item:hover, .education-item:hover, .project-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .item-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-company {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .item-date {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.4), rgba(102, 126, 234, 0.1));
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 10s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(118, 75, 162, 0.4), rgba(118, 75, 162, 0.1));
+            top: 70%;
+            left: 85%;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(240, 147, 251, 0.4), rgba(240, 147, 251, 0.1));
+            top: 30%;
+            left: 90%;
+            animation-delay: 4s;
+            animation-duration: 14s;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            font-weight: 600;
+            color: var(--primary-color);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .status-success {
+            color: var(--success);
+        }
+
+        .status-error {
+            color: var(--error);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner::before,
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            animation: spinnerPulse 2s ease-in-out infinite;
+        }
+
+        .loading-spinner::before {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            animation-delay: -1s;
+        }
+
+        .loading-spinner::after {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            background: white;
+        }
+
+        @keyframes spinnerPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .theme-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .theme-option.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .theme-blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-green { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
+        .theme-orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .portfolio-content {
+                padding: 30px 20px;
+            }
+            
+            .portfolio-name {
+                font-size: 2.2em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-contact {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .contact-item {
+                text-align: center;
+            }
+            
+            .portfolio-name {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                border-radius: 15px;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.7em;
+            }
+            
+            .portfolio-content {
+                padding: 20px 15px;
+            }
+            
+            .portfolio-name {
+                font-size: 1.6em;
+            }
+            
+            .section-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <div class="status-indicator" id="statusIndicator">
+        <i class="fas fa-check-circle"></i>
+        <span>Portfolio Generated!</span>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing your resume...</div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Resume to Portfolio Converter</h1>
+                <p>Transform your resume into a stunning portfolio instantly</p>
+            </div>
+
+            <div class="form-group">
+                <label for="resumeInput"><i class="fas fa-file-alt"></i> Paste Your Resume Content</label>
+                <textarea id="resumeInput" placeholder="Paste your resume text here... Include name, contact info, experience, education, skills, projects, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="styleSelect"><i class="fas fa-palette"></i> Portfolio Style</label>
+                <select id="styleSelect">
+                    <option value="modern">Modern Professional</option>
+                    <option value="creative">Creative Design</option>
+                    <option value="minimal">Minimal Clean</option>
+                    <option value="tech">Tech Focus</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-paint-roller"></i> Color Theme</label>
+                <div class="theme-selector">
+                    <div class="theme-option theme-blue active" data-theme="blue"></div>
+                    <div class="theme-option theme-green" data-theme="green"></div>
+                    <div class="theme-option theme-orange" data-theme="orange"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="generatePortfolio()">
+                    <i class="fas fa-magic"></i> Generate Portfolio
+                </button>
+                <button class="btn btn-secondary" onclick="loadSample()">
+                    <i class="fas fa-file-alt"></i> Load Sample
+                </button>
+                <button class="btn btn-secondary" onclick="exportPortfolio()">
+                    <i class="fas fa-download"></i> Export HTML
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="portfolio-preview">
+                <div class="preview-controls">
+                    <button class="preview-btn" onclick="togglePreview()" title="Toggle Preview">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="preview-btn" onclick="refreshPreview()" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="preview-btn" onclick="downloadPDF()" title="Download PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
+                </div>
+                <div class="portfolio-content" id="portfolioPreview">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">Your Name Here</div>
+                        <div class="portfolio-title">Professional Title</div>
+                        <div class="portfolio-contact">
+                            <a href="#" class="contact-item"><i class="fas fa-envelope"></i> Email</a>
+                            <a href="#" class="contact-item"><i class="fas fa-phone"></i> Phone</a>
+                            <a href="#" class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-user"></i> About Me</h2>
+                        <p class="portfolio-text">Paste your resume content and watch it transform into a beautiful portfolio. This tool uses advanced parsing to extract key information and create a professional presentation.</p>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-briefcase"></i> Experience</h2>
+                        <div class="experience-item">
+                            <div class="item-title">Your Job Title</div>
+                            <div class="item-company">Company Name</div>
+                            <div class="item-date">2020 - Present</div>
+                            <div class="item-description">Job description and achievements will appear here...</div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Education</h2>
+                        <div class="education-item">
+                            <div class="item-title">Your Degree</div>
+                            <div class="item-company">University Name</div>
+                            <div class="item-date">2016 - 2020</div>
+                            <div class="item-description">Degree details and accomplishments will appear here...</div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-code"></i> Skills</h2>
+                        <div class="skills-container">
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">HTML/CSS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTheme = 'blue';
+        let portfolioData = {};
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up theme selection
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTheme = this.dataset.theme;
+                    applyTheme(currentTheme);
+                });
+            });
+            
+            // Add event listeners for enhanced UX
+            document.getElementById('resumeInput').addEventListener('input', function() {
+                if (this.value.trim().length > 0) {
+                    this.classList.add('has-content');
+                } else {
+                    this.classList.remove('has-content');
+                }
+            });
+            
+            // Initialize with sample data
+            loadSample();
+        });
+        
+        // Theme management
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            const themes = {
+                blue: { 
+                    primary: '#667eea', 
+                    secondary: '#764ba2', 
+                    accent: '#f093fb' 
+                },
+                green: { 
+                    primary: '#56ab2f', 
+                    secondary: '#a8e6cf', 
+                    accent: '#5fc65a' 
+                },
+                orange: { 
+                    primary: '#f093fb', 
+                    secondary: '#f5576c', 
+                    accent: '#f093fb' 
+                }
+            };
+            
+            if (themes[theme]) {
+                root.style.setProperty('--primary-color', themes[theme].primary);
+                root.style.setProperty('--secondary-color', themes[theme].secondary);
+                root.style.setProperty('--accent-color', themes[theme].accent);
+            }
+        }
+        
+        // Resume parsing function with enhanced extraction
+        function parseResume(text) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            let data = {
+                name: '',
+                title: '',
+                contact: { email: '', phone: '', linkedin: '', github: '' },
+                summary: '',
+                experience: [],
+                education: [],
+                skills: [],
+                projects: []
+            };
+
+            // Extract name (usually first non-empty line)
+            if (lines.length > 0) {
+                data.name = lines[0].length < 50 ? lines[0] : extractName(text);
+            }
+
+            // Extract contact information
+            const emailRegex = /[\w\.-]+@[\w\.-]+\.\w+/g;
+            const phoneRegex = /[\+]?[\d\s\-\(\)]{10,}/g;
+            const linkedinRegex = /linkedin\.com\/[\w\/-]+/gi;
+            const githubRegex = /github\.com\/[\w\/-]+/gi;
+
+            const emails = text.match(emailRegex);
+            const phones = text.match(phoneRegex);
+            const linkedin = text.match(linkedinRegex);
+            const github = text.match(githubRegex);
+
+            if (emails) data.contact.email = emails[0];
+            if (phones) data.contact.phone = phones[0];
+            if (linkedin) data.contact.linkedin = linkedin[0];
+            if (github) data.contact.github = github[0];
+
+            // Extract title/position
+            data.title = extractTitle(text);
+            
+            // Extract sections
+            data.experience = extractSection(text, ['experience', 'work', 'employment', 'career']);
+            data.education = extractSection(text, ['education', 'academic', 'degree', 'university', 'college']);
+            data.skills = extractSkills(text);
+            data.projects = extractSection(text, ['projects', 'portfolio', 'work samples']);
+            data.summary = extractSummary(text);
+
+            return data;
+        }
+        
+        // Enhanced extraction functions
+        function extractName(text) {
+            const lines = text.split('\n');
+            for (let line of lines.slice(0, 5)) {
+                line = line.trim();
+                if (line.length > 2 && line.length < 50 && /^[A-Za-z\s\.]+$/.test(line)) {
+                    return line;
+                }
+            }
+            return 'Your Name';
+        }
+        
+        function extractTitle(text) {
+            const lines = text.split('\n');
+            for (let i = 1; i < Math.min(5, lines.length); i++) {
+                const line = lines[i].trim();
+                if (line.length > 5 && line.length < 80 && 
+                    (line.includes('Engineer') || line.includes('Developer') || 
+                     line.includes('Manager') || line.includes('Designer') ||
+                     line.includes('Analyst') || line.includes('Specialist'))) {
+                    return line;
+                }
+            }
+            return 'Professional Title';
+        }
+        
+        function extractSection(text, keywords) {
+            const sections = [];
+            const lines = text.split('\n');
+            let inSection = false;
+            let currentSection = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].toLowerCase().trim();
+                
+                // Check if we're entering a relevant section
+                if (keywords.some(keyword => line.includes(keyword)) && line.length < 50) {
+                    inSection = true;
+                    continue;
+                }
+                
+                // If we're in a section, try to parse entries
+                if (inSection) {
+                    // Check if we've hit another section
+                    if (line.includes('education') || line.includes('skills') || 
+                        line.includes('projects') || line.includes('experience')) {
+                        if (!keywords.some(keyword => line.includes(keyword))) {
+                            inSection = false;
+                            continue;
+                        }
+                    }
+                    
+                    // Try to parse a structured entry
+                    const entry = parseEntry(lines, i);
+                    if (entry) {
+                        sections.push(entry);
+                        i += entry.linesConsumed || 0;
+                    }
+                }
+            }
+
+            return sections.length > 0 ? sections : generateSampleEntries(keywords[0]);
+        }
+        
+        function parseEntry(lines, startIndex) {
+            let entry = { title: '', company: '', date: '', description: '', linesConsumed: 0 };
+            let currentIndex = startIndex;
+            
+            if (currentIndex >= lines.length) return null;
+
+            // Extract title/position (usually the first non-empty line)
+            entry.title = lines[currentIndex].trim();
+            currentIndex++;
+            entry.linesConsumed++;
+
+            // Look for company and date in next few lines
+            for (let i = 0; i < 3 && currentIndex < lines.length; i++) {
+                const line = lines[currentIndex].trim();
+                if (!line) {
+                    currentIndex++;
+                    entry.linesConsumed++;
+                    continue;
+                }
+
+                // Check if it looks like a date
+                if (/\d{4}|\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(line)) {
+                    entry.date = line;
+                } else if (!entry.company && line.length > 0) {
+                    entry.company = line;
+                }
+
+                currentIndex++;
+                entry.linesConsumed++;
+            }
+
+            // Collect description
+            let description = [];
+            while (currentIndex < lines.length) {
+                const line = lines[currentIndex].trim();
+                if (!line || /^[A-Z\s]{10,}$/.test(line)) break; // Likely a new section
+                if (line.includes('•') || line.includes('-')) {
+                    description.push(line.replace(/[•\-]/, '').trim());
+                } else {
+                    description.push(line);
+                }
+                currentIndex++;
+                entry.linesConsumed++;
+                if (description.length > 5) break; // Limit description length
+            }
+
+            entry.description = description.join(' ');
+            return entry.title ? entry : null;
+        }
+        
+        function extractSkills(text) {
+            const skillKeywords = [
+                'javascript', 'python', 'java', 'react', 'angular', 'vue', 'node', 'express',
+                'html', 'css', 'sql', 'mongodb', 'aws', 'docker', 'kubernetes', 'git',
+                'typescript', 'php', 'ruby', 'go', 'rust', 'c++', 'c#', 'swift',
+                'flutter', 'android', 'ios', 'machine learning', 'ai', 'data science',
+                'photoshop', 'figma', 'sketch', 'adobe', 'marketing', 'seo', 'analytics'
+            ];
+
+            const foundSkills = [];
+            const lowerText = text.toLowerCase();
+
+            skillKeywords.forEach(skill => {
+                if (lowerText.includes(skill)) {
+                    foundSkills.push(skill.charAt(0).toUpperCase() + skill.slice(1));
+                }
+            });
+
+            // Look for skills section specifically
+            const skillsSection = text.match(/skills?[\s\S]*?(?=\n\n|\n[A-Z]|$)/i);
+            if (skillsSection) {
+                const skillsText = skillsSection[0];
+                const additionalSkills = skillsText.match(/\b[A-Za-z+#\.]{2,15}\b/g);
+                if (additionalSkills) {
+                    additionalSkills.forEach(skill => {
+                        if (skill.length > 2 && !foundSkills.includes(skill)) {
+                            foundSkills.push(skill);
+                        }
+                    });
+                }
+            }
+
+            return foundSkills.length > 0 ? foundSkills : ['JavaScript', 'HTML/CSS', 'Problem Solving', 'Communication'];
+        }
+        
+        function extractSummary(text) {
+            const summaryKeywords = ['summary', 'objective', 'profile', 'about'];
+            const lines = text.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].toLowerCase().trim();
+                if (summaryKeywords.some(keyword => line.includes(keyword)) && line.length < 50) {
+                    // Found summary section, collect next few lines
+                    let summary = [];
+                    for (let j = i + 1; j < Math.min(i + 5, lines.length); j++) {
+                        const summaryLine = lines[j].trim();
+                        if (summaryLine && !summaryKeywords.some(k => summaryLine.toLowerCase().includes(k))) {
+                            summary.push(summaryLine);
+                        }
+                    }
+                    return summary.join(' ');
+                }
+            }
+            
+            return 'Passionate professional with expertise in delivering high-quality solutions and driving innovation.';
+        }
+        
+        function generateSampleEntries(type) {
+            const samples = {
+                experience: [{
+                    title: 'Software Engineer',
+                    company: 'Tech Company Inc.',
+                    date: '2022 - Present',
+                    description: 'Developed scalable web applications and collaborated with cross-functional teams to deliver high-quality software solutions.'
+                }],
+                education: [{
+                    title: 'Bachelor of Science in Computer Science',
+                    company: 'University Name',
+                    date: '2018 - 2022',
+                    description: 'Graduated with honors, focusing on software engineering and data structures.'
+                }],
+                projects: [{
+                    title: 'Portfolio Website',
+                    company: 'Personal Project',
+                    date: '2023',
+                    description: 'Built a responsive portfolio website using modern web technologies.'
+                }]
+            };
+            
+            return samples[type] || [];
+        }
+        
+        // Portfolio generation
+        function generatePortfolio() {
+            const resumeText = document.getElementById('resumeInput').value;
+            if (!resumeText.trim()) {
+                showStatus('Please paste your resume content first!', 'error');
+                return;
+            }
+
+            // Show loading overlay
+            showLoading(true);
+
+            // Simulate processing time for better UX
+            setTimeout(() => {
+                portfolioData = parseResume(resumeText);
+                renderPortfolio(portfolioData);
+                showLoading(false);
+                showStatus('Portfolio Generated Successfully!', 'success');
+            }, 1500);
+        }
+        
+        function renderPortfolio(data) {
+            const preview = document.getElementById('portfolioPreview');
+            const style = document.getElementById('styleSelect').value;
+
+            const html = `
+                <div class="portfolio-content ${style}">
+                    ${renderHeader(data)}
+                    ${data.summary ? renderSection('About Me', `<p class="portfolio-text">${data.summary}</p>`, 'user') : ''}
+                    ${data.experience.length > 0 ? renderSection('Experience', renderItems(data.experience, 'experience'), 'briefcase') : ''}
+                    ${data.projects.length > 0 ? renderSection('Projects', renderItems(data.projects, 'project'), 'code') : ''}
+                    ${data.education.length > 0 ? renderSection('Education', renderItems(data.education, 'education'), 'graduation-cap') : ''}
+                    ${data.skills.length > 0 ? renderSection('Skills', renderSkills(data.skills), 'cog') : ''}
+                </div>
+            `;
+
+            preview.innerHTML = html;
+        }
+        
+        function renderHeader(data) {
+            const contacts = [];
+            if (data.contact.email) contacts.push(`<a href="mailto:${data.contact.email}" class="contact-item"><i class="fas fa-envelope"></i> ${data.contact.email}</a>`);
+            if (data.contact.phone) contacts.push(`<a href="tel:${data.contact.phone}" class="contact-item"><i class="fas fa-phone"></i> ${data.contact.phone}</a>`);
+            if (data.contact.linkedin) contacts.push(`<a href="https://${data.contact.linkedin}" class="contact-item" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>`);
+            if (data.contact.github) contacts.push(`<a href="https://${data.contact.github}" class="contact-item" target="_blank"><i class="fab fa-github"></i> GitHub</a>`);
+
+            return `
+                <div class="portfolio-header">
+                    <div class="portfolio-name">${data.name || 'Your Name'}</div>
+                    <div class="portfolio-title">${data.title || 'Professional Title'}</div>
+                    <div class="portfolio-contact">
+                        ${contacts.join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderSection(title, content, icon) {
+            return `
+                <div class="portfolio-section">
+                    <h2 class="section-title"><i class="fas fa-${icon}"></i> ${title}</h2>
+                    ${content}
+                </div>
+            `;
+        }
+        
+        function renderItems(items, type) {
+            return items.map(item => `
+                <div class="${type}-item">
+                    <div class="item-title">${item.title}</div>
+                    ${item.company ? `<div class="item-company">${item.company}</div>` : ''}
+                    ${item.date ? `<div class="item-date">${item.date}</div>` : ''}
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function renderSkills(skills) {
+            return `
+                <div class="skills-container">
+                    ${skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                </div>
+            `;
+        }
+        
+        // UI Functions
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.add('show');
+            } else {
+                overlay.classList.remove('show');
+            }
+        }
+        
+        function showStatus(message, type = 'success') {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> <span>${message}</span>`;
+            indicator.className = `status-indicator show ${type === 'success' ? 'status-success' : 'status-error'}`;
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+        
+        function loadSample() {
+            const sampleResume = `John Doe
+Senior Software Engineer | Full-Stack Developer
+
+📧 john.doe@email.com | 📱 (555) 123-4567 | 🔗 linkedin.com/in/johndoe | 📊 github.com/johndoe
+
+PROFESSIONAL SUMMARY
+Results-driven Senior Software Engineer with 8+ years of experience building scalable web applications and leading development teams. Expertise in React, Node.js, and cloud technologies. Passionate about creating intuitive user experiences and implementing robust backend systems.
+
+WORK EXPERIENCE
+
+Senior Software Engineer
+Meta (Facebook) | Menlo Park, CA
+March 2022 - Present
+• Led development of high-impact features for Facebook's News Feed, serving 2.9B+ users
+• Architected and implemented microservices using Node.js and GraphQL, improving API performance by 40%
+• Mentored 5 junior developers and conducted technical interviews for hiring
+• Collaborated with cross-functional teams including Design, Product, and Data Science
+
+Software Engineer II
+Google | Mountain View, CA
+June 2019 - February 2022
+• Developed and maintained Google Search features using Java and Python
+• Implemented machine learning models to improve search relevance, increasing user satisfaction by 15%
+• Built responsive web interfaces using modern JavaScript frameworks
+• Participated in code reviews and contributed to engineering best practices
+
+Full-Stack Developer
+Startup Inc. | San Francisco, CA
+August 2016 - May 2019
+• Built the company's main product from MVP to production, handling 100K+ daily active users
+• Designed and implemented RESTful APIs using Express.js and MongoDB
+• Created responsive React components and implemented real-time features using WebSocket
+• Set up CI/CD pipelines using Docker and Jenkins, reducing deployment time by 60%
+
+EDUCATION
+
+Master of Science in Computer Science
+Stanford University | Stanford, CA
+2014 - 2016
+• Specialization in Artificial Intelligence and Human-Computer Interaction
+• GPA: 3.8/4.0 | Dean's List recipient
+
+Bachelor of Science in Software Engineering
+UC Berkeley | Berkeley, CA
+2010 - 2014
+• Magna Cum Laude graduate
+• President of Computer Science Student Association
+
+SKILLS
+JavaScript, TypeScript, Python, Java, React, Node.js, Express.js, GraphQL, MongoDB, PostgreSQL, AWS, Docker, Kubernetes, Git, Machine Learning, TensorFlow, Agile Development, System Design
+
+PROJECTS
+
+Social Media Analytics Dashboard
+• Built a comprehensive analytics platform using React, D3.js, and Python
+• Implemented real-time data visualization for social media metrics
+• Deployed on AWS with auto-scaling capabilities handling 50K+ concurrent users
+
+Open Source Contributions
+• Contributor to React, Webpack, and other popular open-source projects
+• Maintained personal open-source library with 2K+ GitHub stars
+• Regular speaker at tech conferences and meetups`;
+
+            document.getElementById('resumeInput').value = sampleResume;
+            showStatus('Sample resume loaded successfully!', 'success');
+        }
+        
+        function exportPortfolio() {
+            if (!portfolioData || Object.keys(portfolioData).length === 0) {
+                showStatus('Please generate a portfolio first!', 'error');
+                return;
+            }
+            
+            const style = document.getElementById('styleSelect').value;
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${portfolioData.name} - Professional Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Add the portfolio styles here */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .portfolio-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        /* Add the rest of the portfolio styles */
+    </style>
+</head>
+<body>
+    ${document.getElementById('portfolioPreview').innerHTML}
+</body>
+</html>`;
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${portfolioData.name.replace(/\s+/g, '-').toLowerCase()}-portfolio.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('Portfolio exported successfully!', 'success');
+        }
+        
+        function clearAll() {
+            document.getElementById('resumeInput').value = '';
+            portfolioData = {};
+            document.getElementById('portfolioPreview').innerHTML = `
+                <div class="portfolio-content">
+                    <div class="portfolio-header">
+                        <div class="portfolio-name">Your Name Here</div>
+                        <div class="portfolio-title">Professional Title</div>
+                        <div class="portfolio-contact">
+                            <a href="#" class="contact-item"><i class="fas fa-envelope"></i> Email</a>
+                            <a href="#" class="contact-item"><i class="fas fa-phone"></i> Phone</a>
+                            <a href="#" class="contact-item"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-user"></i> About Me</h2>
+                        <p class="portfolio-text">Paste your resume content and watch it transform into a beautiful portfolio. This tool uses advanced parsing to extract key information and create a professional presentation.</p>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-briefcase"></i> Experience</h2>
+                        <div class="experience-item">
+                            <div class="item-title">Your Job Title</div>
+                            <div class="item-company">Company Name</div>
+                            <div class="item-date">2020 - Present</div>
+                            <div class="item-description">Job description and achievements will appear here...</div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Education</h2>
+                        <div class="education-item">
+                            <div class="item-title">Your Degree</div>
+                            <div class="item-company">University Name</div>
+                            <div class="item-date">2016 - 2020</div>
+                            <div class="item-description">Degree details and accomplishments will appear here...</div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-section">
+                        <h2 class="section-title"><i class="fas fa-code"></i> Skills</h2>
+                        <div class="skills-container">
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">HTML/CSS</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showStatus('All content cleared!', 'success');
+        }
+        
+        function togglePreview() {
+            const preview = document.getElementById('portfolioPreview');
+            preview.classList.toggle('preview-mode');
+        }
+        
+        function refreshPreview() {
+            if (Object.keys(portfolioData).length > 0) {
+                renderPortfolio(portfolioData);
+                showStatus('Preview refreshed!', 'success');
+            } else {
+                showStatus('Generate a portfolio first!', 'error');
+            }
+        }
+        
+        function downloadPDF() {
+            showStatus('PDF export coming soon!', 'info');
+        }
+    </script>
+</body>
+</html>
